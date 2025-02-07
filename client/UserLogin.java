@@ -1,10 +1,11 @@
-package server;
+package client;
 
-public class MessageHandler implements DataHandler {
+public class UserLogin implements View {
 
     @Override
     public void update() {
         // TODO Auto-generated method stub
         
     }
+    
 }

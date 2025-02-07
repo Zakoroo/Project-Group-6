@@ -1,10 +1,11 @@
-package server;
+package client;
 
-public class ChatHandler implements DataHandler {
+public class MsgController implements Controller {
 
     @Override
     public void update() {
         // TODO Auto-generated method stub
         
     }
+    
 }
