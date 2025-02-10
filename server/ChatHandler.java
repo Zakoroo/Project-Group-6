@@ -1,8 +1,8 @@
-package server;
+class ChatHandler {
+    private ChatRoom chatRoom = new ChatRoom();
+    private Msg msg = new Msg();
 
-public class ChatHandler {
-    private String field;
-    private Msg message;
-    private ChatRoom chatRoom;
-
+    public void handleChat() {
+        // Handle chat-related logic here
+    }
 }
