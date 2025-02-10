@@ -1,8 +1,8 @@
-public class ChatRoom {
-    public void joinRoom() {
+package server;
 
-    }
+public class ChatHandler {
+    private String field;
+    private Msg message;
+    private ChatRoom chatRoom;
 
-    public void leaveRoom() {
-    }
 }
