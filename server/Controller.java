@@ -1,7 +1,14 @@
 public class Controller {
+    private ChatHandler chatHandler;
+    private AccountHandler accountHandler;
 
-    private ChatHandler chatHandler = new ChatHandler();
-    private AccountHandler accountHandler = new AccountHandler();
+    public Controller() {
+        Database database = new Database();
+        this.chatHandler = new ChatHandler(database);
+        this.accountHandler = new AccountHandler(database);
+    }
 
-
+    public void start() {
+        System.out.println("Welcome to the Chat Application");
+    }
 }

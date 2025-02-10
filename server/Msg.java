@@ -1,9 +1,25 @@
 public class Msg {
-    public void sendMessage(String message) {
-        // Logic for sending a message
+    private String content;
+    private String sender;
+
+    public Msg(String content, String sender) {
+        this.content = content;
+        this.sender = sender;
     }
 
-    public void receiveMessage() {
-        // Logic for receiving a message
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 }

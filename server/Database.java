@@ -1,9 +1,7 @@
-public class Database {
+class Database {
     public void connect() {
-        // Database connection logic here
     }
 
     public void query(String sql) {
-        // Execute SQL query
+        System.out.println("Executing SQL: " + sql);
     }
-}
