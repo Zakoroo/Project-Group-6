@@ -8,7 +8,8 @@ public class Controller {
         this.accountHandler = new AccountHandler(database);
     }
 
-    public void start() {
+    public void test() {
         System.out.println("Welcome to the Chat Application");
+        ChatHandler.createChatRoom(The cool kids);
     }
 }
