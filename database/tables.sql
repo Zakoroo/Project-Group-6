@@ -6,18 +6,18 @@ CREATE TABLE Users (
 
 CREATE TABLE ChatRooms (
     name TEXT PRIMARY KEY,
-    chathost INT REFERENCES Users
+    chathost TEXT REFERENCES Users(name)
 );
 
 CREATE TABLE ChatMembers (
-    username INT REFERENCES Users, 
-    chatname INT REFERENCES ChatRooms,
+    username TEXT REFERENCES Users(name), 
+    chatname TEXT REFERENCES ChatRooms(name),
     PRIMARY KEY (username, chatname)
 );
 
 CREATE TABLE Messages (
-    username INT,
-    chatname INT,
+    username TEXT,
+    chatname TEXT,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     type TEXT CHECK (type IN ('text', 'image')),
     textmsg TEXT,
@@ -29,4 +29,3 @@ CREATE TABLE Messages (
         (type = 'image' AND textmsg IS NULL AND imageurl IS NOT NULL)
     )
 );
-
