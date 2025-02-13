@@ -20,7 +20,7 @@ public class ChatHandler {
     }
 
     public ChatRoom findChat(String chatName) throws SQLException {
-        String sql = "SELECT * FROM Chat_Rooms WHERE name = ?;";
+        String sql = "SELECT * FROM ChatRooms WHERE name = ?;";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, chatName);
         ResultSet rs = ps.executeQuery();
@@ -35,7 +35,7 @@ public class ChatHandler {
     }
 
     public void joinChat(String userName, String chatName) throws SQLException{
-        String sql = "INSERT INTO Chat_Members (username, chatname) VALUES (?, ?);";
+        String sql = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, userName);
         ps.setString(2, chatName);

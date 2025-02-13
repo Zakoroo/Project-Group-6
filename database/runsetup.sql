@@ -10,3 +10,4 @@ SET client_min_messages TO NOTICE;
 
 -- initialize the database
 \ir tables.sql
+\ir triggers.sql
