@@ -59,7 +59,7 @@ public class ChatHandler {
     }
 
     public void sendMessage(Message msg) throws SQLException {
-        String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imageurl) VALUES (?,?,?,?,?);";
+        String sql = "INSERT INTO Messages VALUES (?,?, CURRENT_TIMESTAMP,?,?,?);";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, msg.userName());
         ps.setString(2, msg.chatName());

@@ -45,6 +45,7 @@ public class Server {
             accountHandler.registerUser("user2", "user2@example.com", "password2");
             accountHandler.registerUser("user3", "user3@example.com", "password3");
             accountHandler.registerUser("user4", "user4@example.com", "password4");
+            accountHandler.registerUser("adina", "adinaan@chalmers.se", "4739840ab490b");
         } catch (SQLException e) {
             System.out.println(e);
         }
@@ -52,7 +53,7 @@ public class Server {
 
         try {
             System.out.println("Trying to register an already registered user...");
-            accountHandler.registerUser("user1", "password1", "user1@example.com");
+            accountHandler.registerUser("user1", "user1@example.com","password1");
         } catch (SQLException e) {
             System.out.println(e);
         }
