@@ -1,3 +1,6 @@
+-- Author: Hussein Hafid
+-- Latest modifications: 2025-02-16
+
 CREATE TABLE Users (
     username TEXT PRIMARY KEY,
     nickname TEXT NOT NULL,

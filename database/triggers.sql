@@ -1,3 +1,6 @@
+-- Author: Hussein Hafid
+-- Latest modifications: 2025-02-16
+
 --  Add the host as a member to their chatroom upon creation
 CREATE FUNCTION create_chat_func() RETURNS TRIGGER AS
 $$
