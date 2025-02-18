@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="API Endpoints Documentation for debugging and server interactions.">
+    <title>API Endpoints Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --copied-color: #28a745;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --accent-color: #e9ecef;
+            --border-radius: 5px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .description {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background: var(--accent-color);
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            transition: background 0.3s ease;
+        }
+
+        li:hover {
+            background: #dfe3e6;
+        }
+
+        .endpoint-desc {
+            margin: 0 0 10px 0;
+            font-style: italic;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .endpoint-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .endpoint {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .copy-btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-btn i {
+            margin-right: 5px;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .copy-btn.copied {
+            background-color: var(--copied-color);
+        }
+
+        @media (max-width: 600px) {
+            .endpoint-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .copy-btn {
+                margin-top: 10px;
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>API Endpoints Documentation</h1>
+    </header>
+    <main>
+        <p class="description">
+            Welcome to our API documentation page. This interface is designed for debugging and interacting with the server’s endpoints.
+            Click the "Copy" button to copy the endpoint details to your clipboard.
+        </p>
+        <ul>
+            <li>
+                <p class="endpoint-desc">Retrieve a list of all registered users.</p>
+                <div class="endpoint-container">
+                    <span class="endpoint">GET /api/users</span>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'GET /api/users')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+            </li>
+            <li>
+                <p class="endpoint-desc">Create a new user record.</p>
+                <div class="endpoint-container">
+                    <span class="endpoint">POST /api/users</span>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'POST /api/users')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+            </li>
+            <li>
+                <p class="endpoint-desc">Retrieve detailed information for a specific user by ID.</p>
+                <div class="endpoint-container">
+                    <span class="endpoint">GET /api/users/{id}</span>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'GET /api/users/{id}')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+            </li>
+            <li>
+                <p class="endpoint-desc">Update the information of an existing user using their ID.</p>
+                <div class="endpoint-container">
+                    <span class="endpoint">PUT /api/users/{id}</span>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'PUT /api/users/{id}')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+            </li>
+            <li>
+                <p class="endpoint-desc">Delete a user record by its ID.</p>
+                <div class="endpoint-container">
+                    <span class="endpoint">DELETE /api/users/{id}</span>
+                    <button class="copy-btn" onclick="copyToClipboard(this, 'DELETE /api/users/{id}')">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </main>
+    <script>
+        function copyToClipboard(button, text) {
+            navigator.clipboard.writeText(text).then(function() {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 1500);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
