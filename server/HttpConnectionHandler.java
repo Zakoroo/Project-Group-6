@@ -30,9 +30,6 @@ public class HttpConnectionHandler implements ConnectionHandler {
 
         // add context to the server
         server.createContext("/", new RootHandler());
-
-        
-
     }
 
     @Override
