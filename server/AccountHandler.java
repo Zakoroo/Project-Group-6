@@ -11,8 +11,8 @@ public class AccountHandler {
         this.conn = conn;
     }
 
-    public void registerUser(String username, String email, String password) throws SQLException {
-        String sql = "INSERT INTO Users VALUES(?,?,?)";
+    public void signup(String nickname, String username, String email, String password) throws SQLException {
+        String sql = "INSERT INTO Users VALUES(?,?,?);";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, username);
         ps.setString(2, email);
@@ -20,46 +20,26 @@ public class AccountHandler {
         ps.executeUpdate();
     }
 
-    public User authenticateUser(String username, String password) throws SQLException {
-        if(!password.equals(getPassword(username))) {
-            throw new SQLException("Password incorrect!");
-        }
-
-        String sql = "SELECT name, email FROM Users WHERE name = ? AND password = ?";
+    public boolean signin(String username, String password) throws SQLException {
+        String sql = "SELECT EXISTS(SELECT 1 FROM Users WHERE username = ? AND password = ?);";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, username);
         ps.setString(2, password);
         ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return new User(username, rs.getString("email"), password);
+        return Boolean.parseBoolean(rs.getString(1));
+    }
+
+    public boolean deleteUser(String username, String password) throws SQLException {
+        if(this.signin(username, password)) {
+            String sql = "DELETE FROM Users WHERE name = ? AND password = ?;";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.executeUpdate();
+            return true;
         }
         else {
-            return null;
-        }
-    }
-
-    public void deleteUser(String username, String password) throws SQLException {
-        if(!password.equals(getPassword(username))) {
-            throw new SQLException("Password incorrect!");
-        }
-
-        String sql = "DELETE FROM Users WHERE name = ? AND password = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, username);
-        ps.setString(2, password);
-        ps.executeUpdate();
-    }
-
-    private String getPassword(String username) throws SQLException {
-        String sql = "SELECT password FROM Users WHERE name = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, username);
-        ResultSet rs = ps.executeQuery();
-        if(rs.next()) {
-            return rs.getString("password");
-        }
-        else  {
-            throw new SQLException(String.format("The user %d does not exist!", username));
+            return false;
         }
     }
 }

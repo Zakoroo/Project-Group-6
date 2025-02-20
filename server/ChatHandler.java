@@ -58,14 +58,14 @@ public class ChatHandler {
         ps.executeUpdate();
     }
 
-    public void sendMessage(Message msg) throws SQLException {
-        String sql = "INSERT INTO Messages VALUES (?,?, CURRENT_TIMESTAMP,?,?,?);";
+    public void sendMessage(Message msg, String chatname) throws SQLException {
+        String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imagedata, timestamp) VALUES (?,?,?,?,?, CURRENT_TIMESTAMP);";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, msg.userName());
-        ps.setString(2, msg.chatName());
+        ps.setString(1, msg.username());
+        ps.setString(2, chatname);
         ps.setString(3, msg.type());
-        ps.setString(4, msg.text_msg());
-        ps.setString(5, msg.img_url());
+        ps.setString(4, msg.text());
+        ps.setBytes(5, msg.image());
         ps.executeUpdate();
     }
 
@@ -79,11 +79,10 @@ public class ChatHandler {
         while(rs.next()) {
             Message msg = new Message(
                 rs.getString("username"), 
-                rs.getString("chatname"),
-                rs.getTimestamp("timestamp"),
                 rs.getString("type"),
                 rs.getString("textmsg"),
-                rs.getString("imageurl")
+                rs.getBytes("imagedata"),
+                rs.getTimestamp("timestamp")
             );
             history.add(msg);
         }
