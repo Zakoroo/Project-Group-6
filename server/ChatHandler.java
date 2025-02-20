@@ -11,12 +11,18 @@ public class ChatHandler {
         this.conn = conn;
     }
 
-    public void createChat(String chatName, String chatHost) throws SQLException {
-        String sql = "INSERT INTO ChatRooms (name, chathost) VALUES (?, ?);";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, chatName);
-        ps.setString(2, chatHost);
-        ps.executeUpdate();
+    public boolean createChat(String chatName, String chatHost) {
+        try {
+            String sql = "INSERT INTO ChatRooms (chatname, chathost) VALUES (?, ?);";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, chatName);
+            ps.setString(2, chatHost);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public ChatRoom findChat(String chatName) throws SQLException {
@@ -28,13 +34,12 @@ public class ChatHandler {
         if (rs.next()) { // if found create chat room object
             String chatHost = rs.getString("chathost");
             return new ChatRoom(chatName, chatHost);
-        }
-        else { // else return null
+        } else { // else return null
             return null;
         }
     }
 
-    public void joinChat(String userName, String chatName) throws SQLException{
+    public void joinChat(String userName, String chatName) throws SQLException {
         String sql = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, userName);
@@ -50,13 +55,16 @@ public class ChatHandler {
         ps.executeUpdate();
     }
 
-    public void deleteChat(String chatName, String chatHost) throws SQLException {
-        String sql = "DELETE FROM ChatRooms WHERE name = ? AND chathost = ?;";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, chatName);
-        ps.setString(2, chatHost);
-        ps.executeUpdate();
-    }
+    /*
+     * public void deleteChat(String chatName, String chatHost) throws SQLException
+     * {
+     * String sql = "DELETE FROM ChatRooms WHERE name = ? AND chathost = ?;";
+     * PreparedStatement ps = conn.prepareStatement(sql);
+     * ps.setString(1, chatName);
+     * ps.setString(2, chatHost);
+     * ps.executeUpdate();
+     * }
+     */
 
     public void sendMessage(Message msg, String chatname) throws SQLException {
         String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imagedata, timestamp) VALUES (?,?,?,?,?, CURRENT_TIMESTAMP);";
@@ -69,21 +77,20 @@ public class ChatHandler {
         ps.executeUpdate();
     }
 
-    public ArrayList<Message> getHistory(String chatName) throws SQLException{
+    public ArrayList<Message> getHistory(String chatName) throws SQLException {
         ArrayList<Message> history = new ArrayList<>();
         String sql = "SELECT * FROM Messages WHERE chatname = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, chatName);
         ResultSet rs = ps.executeQuery();
-        
-        while(rs.next()) {
+
+        while (rs.next()) {
             Message msg = new Message(
-                rs.getString("username"), 
-                rs.getString("type"),
-                rs.getString("textmsg"),
-                rs.getBytes("imagedata"),
-                rs.getTimestamp("timestamp")
-            );
+                    rs.getString("username"),
+                    rs.getString("type"),
+                    rs.getString("textmsg"),
+                    rs.getBytes("imagedata"),
+                    rs.getTimestamp("timestamp"));
             history.add(msg);
         }
         return history;
