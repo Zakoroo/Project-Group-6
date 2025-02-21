@@ -67,17 +67,6 @@ public class ChatHandler {
         return false;
     }
 
-    /*
-     * public void deleteChat(String chatName, String chatHost) throws SQLException
-     * {
-     * String sql = "DELETE FROM ChatRooms WHERE name = ? AND chathost = ?;";
-     * PreparedStatement ps = conn.prepareStatement(sql);
-     * ps.setString(1, chatName);
-     * ps.setString(2, chatHost);
-     * ps.executeUpdate();
-     * }
-     */
-
     public boolean sendMessage(Message msg, String chatname) {
         try {
             String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imagedata, timestamp) VALUES (?,?,?,?,?, CURRENT_TIMESTAMP);";
