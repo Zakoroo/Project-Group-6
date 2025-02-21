@@ -11,7 +11,7 @@ public class ChatServer {
     // private static List<PrintWriter> clientWriters = new  CopyOnWriteArrayList<>();
 
     public ChatServer() {
-        // Fetching info for connection pool and create a connection pool
+        // Fetch info for and create a connection pool 
         HikariConfig config = new HikariConfig("/hikari.properties");
         HikariDataSource dataSource = new HikariDataSource(config);
 
