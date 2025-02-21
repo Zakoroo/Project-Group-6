@@ -1,22 +1,23 @@
-
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import com.zaxxer.hikari.*;
+
 import java.sql.*;
 import shared.Container;
 
 public class ClientHandler implements Runnable {
+    private Socket clientSocket;
     private AccountHandler accountHandler;
     private ChatHandler chatHandler;
-    private Socket clientSocket;
     private ChatRoom chatroom;
     private String username;
 
-    public ClientHandler(AccountHandler accountHandler, ChatHandler chatHandler, Socket clientSocket) {
-        this.accountHandler = accountHandler;
-        this.chatHandler = chatHandler;
+    public ClientHandler(Socket clientSocket, HikariDataSource dataSource) {
         this.clientSocket = clientSocket;
+        this.accountHandler = new AccountHandler(dataSource);
+        this.chatHandler = new ChatHandler(dataSource);
     }
 
     @Override
@@ -24,7 +25,10 @@ public class ClientHandler implements Runnable {
         try (
                 // Set up input and output stream for communication
                 ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());) {
+                ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
+            ) {
+
+
             Object object;
             Container container;
 

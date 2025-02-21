@@ -1,16 +1,17 @@
 import java.sql.*;
 import java.util.ArrayList;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class ChatHandler {
-    private Connection conn;
+    private HikariDataSource dataSource;
 
-    public ChatHandler(Connection conn) {
-        this.conn = conn;
+    public ChatHandler(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public boolean createChat(String chatName, String chatHost) {
-        try {
-            String sql = "INSERT INTO ChatRooms (chatname, chathost) VALUES (?, ?);";
+        String sql = "INSERT INTO ChatRooms (chatname, chathost) VALUES (?, ?);";
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, chatName);
             ps.setString(2, chatHost);
@@ -23,8 +24,8 @@ public class ChatHandler {
     }
 
     public ChatRoom findChat(String chatName) {
-        try {
-            String sql = "SELECT * FROM ChatRooms WHERE chatname = ?;";
+        String sql = "SELECT * FROM ChatRooms WHERE chatname = ?;";
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, chatName);
             ResultSet rs = ps.executeQuery();
@@ -40,8 +41,8 @@ public class ChatHandler {
     }
 
     public boolean joinChat(String username, String chatname) {
-        try {
-            String sql = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
+        String sql = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, chatname);
@@ -54,8 +55,8 @@ public class ChatHandler {
     }
 
     public boolean quitChat(String username, String chatname) {
-        try {
-            String sql = "DELETE FROM ChatMembers WHERE username = ? AND chatname = ?;";
+        String sql = "DELETE FROM ChatMembers WHERE username = ? AND chatname = ?;";
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, chatname);
@@ -68,8 +69,8 @@ public class ChatHandler {
     }
 
     public boolean sendMessage(Message msg, String chatname) {
-        try {
-            String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imagedata, timestamp) VALUES (?,?,?,?,?, CURRENT_TIMESTAMP);";
+        String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imagedata, timestamp) VALUES (?,?,?,?,?, CURRENT_TIMESTAMP);";
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, msg.username());
             ps.setString(2, chatname);
@@ -86,8 +87,8 @@ public class ChatHandler {
 
     public ArrayList<Message> getHistory(String chatName, Timestamp timestamp) {
         ArrayList<Message> history = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM Messages WHERE chatname = ? AND timestamp > ?";
+        String sql = "SELECT * FROM Messages WHERE chatname = ? AND timestamp > ?;";
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, chatName);
             ps.setTimestamp(2, timestamp);
