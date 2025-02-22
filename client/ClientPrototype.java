@@ -21,19 +21,19 @@ public class ClientPrototype {
             Container responseContainer;
 
             // Request signup
-            //System.out.println("Signup request sent");
-            //Container singupRequest = new Container("signup", "nickname=abdo&username=abood&email=abdo@gmail.com&password=123456");
-            //oos.writeObject(singupRequest);
-            //oos.flush();   
+            System.out.println("Signup request sent");
+            Container singupRequest = new Container("signup", "nickname=abdo&username=abood&email=abdo@gmail.com&password=123456");
+            oos.writeObject(singupRequest);
+            oos.flush();   
             
             // Signup response
-            //System.out.println("Container received");
-            //responseObject = ois.readObject();
-            //responseContainer = (Container) responseObject;
-            //System.out.println(responseContainer);
+            System.out.println("Container received");
+            responseObject = ois.readObject();
+            responseContainer = (Container) responseObject;
+            System.out.println(responseContainer);
             
             //request signin
-            System.out.println("Signup request sent");
+            System.out.println("Signin request sent");
             Container singinRequest = new Container("signin", "username=abood&password=123456");
             oos.writeObject(singinRequest);
             oos.flush();
@@ -58,7 +58,7 @@ public class ClientPrototype {
 
             // Create chatroom request
             System.out.println("Create chatroom request sent");
-            Container createChatRequest = new Container("create-chat", "chatname=ChillChat");
+            Container createChatRequest = new Container("create-chat", "chatname=Intruders");
             oos.writeObject(createChatRequest);
             oos.flush(); 
 

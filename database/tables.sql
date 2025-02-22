@@ -34,11 +34,11 @@ CREATE TABLE Messages (
     chatname TEXT REFERENCES ChatRooms(chatname),
     type TEXT CHECK (type IN ('text', 'image')),
     textmsg TEXT,
-    imageurl TEXT,
+    imagedata BYTEA,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (username, chatname, timestamp),
     CHECK(
-        (type = 'text' AND textmsg IS NOT NULL AND imageurl IS NULL) OR
-        (type = 'image' AND textmsg IS NULL AND imageurl IS NOT NULL)
+        (type = 'text' AND textmsg IS NOT NULL AND imagedata IS NULL) OR
+        (type = 'image' AND textmsg IS NULL AND imagedata IS NOT NULL)
     )
 );
