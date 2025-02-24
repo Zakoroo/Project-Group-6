@@ -1,0 +1,16 @@
+dataSourceClassName=org.postgresql.ds.PGSimpleDataSource
+
+# Database credentials
+dataSource.user=${DB_USER}
+dataSource.password=${DB_PASSWORD}
+
+# Host information
+dataSource.databaseName=${DB_NAME}
+dataSource.serverName=${DB_SERVER}
+dataSource.portNumber=${DB_PORT}
+
+# Performance configurations
+maximumPoolSize=10
+minimumIdle=5
+connectionTimeout=3000
+idleTimeout=600000
