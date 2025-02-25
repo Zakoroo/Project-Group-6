@@ -1,0 +1,16 @@
+server/AccountHandler.class
+client/ChatController.class
+client/ClientDriver.class
+server/ClientHandler.class
+shared/Message.class
+shared/Container.class
+server/ServerDriver.class
+client/LoginController.class
+client/Client.class
+client/LoginView.class
+client/Observer.class
+client/ChatView.class
+server/ChatServer.class
+server/ChatHandler.class
+shared/ChatRoom.class
+server/NotificationHandler.class

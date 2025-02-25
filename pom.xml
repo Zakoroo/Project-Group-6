@@ -25,31 +25,43 @@
       <artifactId>javafx-controls</artifactId>
       <version>25-ea+5</version>
     </dependency>
+    
+    <!--JavaFX FXML-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>25-ea+5</version>
     </dependency>
+
+    <!--JavaFX Graphics-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
       <version>25-ea+5</version>
     </dependency>
+
+    <!--JavaFX Base-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
       <version>25-ea+5</version>
     </dependency>
+  
+    <!--JavaFX Media-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
       <version>25-ea+5</version>
     </dependency>
+
+    <!--JavaFX Web-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-web</artifactId>
       <version>25-ea+5</version>
     </dependency>
+    
+    <!--JavaFX Swing-->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx</artifactId>
@@ -121,8 +133,26 @@
         </plugin>
       </plugins>
     </pluginManagement>
-  </build>
-
+  <!-- JavaFX Plugin -->
+  <plugins>
+      <plugin>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>0.0.8</version>
+          <executions>
+              <execution>
+                  <id>default-cli</id>
+                  <goals>
+                      <goal>run</goal>
+                  </goals>
+              </execution>
+          </executions>
+          <configuration>
+              <mainClass>client.ClientDriver</mainClass>
+          </configuration>
+      </plugin>
+  </plugins>
+</build>
   <!-- For running ther server program -->
   <profiles>
     <profile>
