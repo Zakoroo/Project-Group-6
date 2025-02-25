@@ -22,6 +22,12 @@ public class ClientDriver {
 
             // Request signup
             System.out.println("Signup request sent");
+            Container singupRequest1 = new Container("signup", "nickname=zein&username=alzeine&email=mohamad@alzeine.com&password=87654321");
+            oos.writeObject(singupRequest1);
+            oos.flush();  
+
+            // Request signup
+            System.out.println("Signup request sent");
             Container singupRequest = new Container("signup", "nickname=abdo&username=abood&email=abdo@gmail.com&password=123456");
             oos.writeObject(singupRequest);
             oos.flush();   
@@ -70,7 +76,7 @@ public class ClientDriver {
 
             // Create Join-chat request request
             System.out.println("join chat request sent");
-            Container joinchatrequest = new Container("join-chat", "username=zein&chatname=Intruders");
+            Container joinchatrequest = new Container("join-chat", "username=alzeine&chatname=Intruders");
             oos.writeObject(joinchatrequest);
             oos.flush();
             

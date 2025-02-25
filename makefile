@@ -13,7 +13,7 @@ SQL_FILE = src/main/resources/db/runsetup.sql
 DB_HOST ?= localhost
 DB_NAME ?= postgres
 DB_USER ?= postgres
-DB_PASSWORD ?= localhost123456
+DB_PASSWORD ?= databaser
 DB_SERVER ?= $(DB_HOST)
 DB_PORT ?= 5432
 
@@ -35,7 +35,8 @@ config: clean-config $(CONFIG_FILE) $(HIKARI_FILE)
 # Clean target: remove old config files
 clean-config:
 	@echo "Removing old configuration files..."
-	@rm -f $(CONFIG_FILE) $(HIKARI_FILE)
+	@test -f $(CONFIG_FILE) && rm -f $(CONFIG_FILE) || true
+	@test -f $(HIKARI_FILE) && rm -f $(HIKARI_FILE) || true
 
 # Rule for generating config.properties
 $(CONFIG_FILE): $(CONFIG_TEMPLATE)
