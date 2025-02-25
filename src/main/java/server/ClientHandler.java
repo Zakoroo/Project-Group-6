@@ -248,10 +248,33 @@ public class ClientHandler implements Runnable {
     
 
     private Container handleQuitChat(Object data) {
-        // TODO: implement this method
-        return null;
-
+        Map<String, String> params;
+    
+        try {
+            if (username == null) {
+                return new Container("error", "User not logged in!");
+            } else if (data instanceof String) {
+                params = parseData((String) data);
+                if (params.keySet().isEmpty()) {
+                    System.out.println("Parsed params are null");
+                    return new Container("error", "Invalid data!");
+                }
+    
+                boolean quit = chatHandler.quitChat(params.get("username"), params.get("chatname"));
+                if (quit) {
+                    return new Container("quit-chat-success", "User " + params.get("username") + " quit chat: " + params.get("chatname"));
+                } else {
+                    return new Container("error", "Failed to quit chat: " + params.get("chatname"));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
+    
+        return new Container("error", "Invalid data!");
     }
+    
 
     // Handle message sending and receiving
     private Container handleSendMessage(Object data) {
