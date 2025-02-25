@@ -66,11 +66,11 @@ db-setup: config
 	@PGPASSWORD=$(DB_PASSWORD) psql -U $(DB_USER) -h $(DB_HOST) -p $(DB_PORT) -d $(DB_NAME) -f $(SQL_FILE)
 
 # Target to run the server side application using Maven
-server:
+server: $(CONFIG_FILE) $(HIKARI_FILE)
 	@echo "Running server side application..."
 	@mvn clean compile exec:java -Pserver
 
 # Target to run the client side application using Maven
-client:
+client: $(CONFIG_FILE) $(HIKARI_FILE)
 	@echo "Running client side application..."
 	@mvn clean compile exec:java -Pclient
