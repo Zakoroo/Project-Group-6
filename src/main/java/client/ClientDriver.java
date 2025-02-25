@@ -3,12 +3,14 @@ package client;
 import java.io.*;
 import java.net.*;
 import shared.Container;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-
-public class ClientDriver {
+public class ClientDriver extends Application{
     public static void main(String[] args) {
         int PORT = 8005;
         String serverAddress = "127.0.0.1";
+        launch(args);
 
         try (
             Socket socket = new Socket(serverAddress, PORT);
@@ -72,5 +74,11 @@ public class ClientDriver {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        
+        throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
 }
