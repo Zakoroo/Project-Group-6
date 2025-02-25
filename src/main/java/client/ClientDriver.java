@@ -68,6 +68,18 @@ public class ClientDriver {
             responseContainer = (Container) responseObject;
             System.out.println(responseContainer);
 
+            // Create Join-chat request request
+            System.out.println("join chat request sent");
+            Container joinchatrequest = new Container("join-chat", "username=zein&chatname=Intruders");
+            oos.writeObject(joinchatrequest);
+            oos.flush();
+            
+            // Create chatroom response
+            responseObject = ois.readObject();
+            System.out.println("Container received");
+            responseContainer = (Container) responseObject;
+            System.out.println(responseContainer);
+
 
         } catch (Exception e) {
             e.printStackTrace();
