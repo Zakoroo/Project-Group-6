@@ -46,7 +46,7 @@ public class ClientDriver {
     
             //request signin
             System.out.println("Signin request sent");
-            Container singinRequest = new Container("signin", "username=abood&password=123456");
+            Container singinRequest = new Container("signin", "username=alzeine&password=87654321");
             oos.writeObject(singinRequest);
             oos.flush();
 
@@ -70,8 +70,8 @@ public class ClientDriver {
             responseContainer = (Container) responseObject;
             System.out.println(responseContainer);
 */
-            // Create chatroom request
-          /*   System.out.println("Create chatroom request sent");
+       /*      // Create chatroom request
+            System.out.println("Create chatroom request sent");
             Container createChatRequest = new Container("create-chat", "chatname=Intruders");
             oos.writeObject(createChatRequest);
             oos.flush(); 
@@ -82,9 +82,9 @@ public class ClientDriver {
             responseContainer = (Container) responseObject;
             System.out.println(responseContainer); */
 
-            // Create Join-chat request request
+         /*    // Create Join-chat request request
             System.out.println("join chat request sent");
-            Container joinchatrequest = new Container("join-chat", "username=kebab&chatname=Intruders");
+            Container joinchatrequest = new Container("join-chat", "username=alzeine&chatname=Intruders");
             oos.writeObject(joinchatrequest);
             oos.flush();
 
@@ -92,12 +92,11 @@ public class ClientDriver {
             responseObject = ois.readObject();
             System.out.println("Container received");
             responseContainer = (Container) responseObject;
-            System.out.println(responseContainer);
-
-
+            System.out.println(responseContainer); */
+ 
              // Create quit-chat request request
             System.out.println("quit chat request sent");
-            Container quitchatrequest = new Container("QuitChat", "username=abood&chatname=Intruders");
+            Container quitchatrequest = new Container("quit-chat", "username=alzeine&chatname=Intruders");
             oos.writeObject(quitchatrequest);
             oos.flush();
             
@@ -105,7 +104,7 @@ public class ClientDriver {
             responseObject = ois.readObject();
             System.out.println("Container received");
             responseContainer = (Container) responseObject;
-            System.out.println(responseContainer);
+            System.out.println(responseContainer); 
             
 
         } catch (Exception e) {
