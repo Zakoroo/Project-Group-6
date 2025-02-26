@@ -199,7 +199,7 @@ public class ClientHandler implements Runnable {
             } else {
                 return new Container("error", "Chatroom already exists");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
@@ -225,7 +225,7 @@ public class ClientHandler implements Runnable {
             } else {
                 return new Container("error", "Failed to join chat: " + params.get("chatname"));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
@@ -254,7 +254,7 @@ public class ClientHandler implements Runnable {
             } else {
                 return new Container("error", "Chatroom not joined or chatroom nonexistent!");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
@@ -275,7 +275,7 @@ public class ClientHandler implements Runnable {
             }
             List<ChatRoom> chatRooms = chatHandler.findChat(params.get("tofind"));
             return new Container("find-chat-success", chatRooms);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
@@ -302,7 +302,7 @@ public class ClientHandler implements Runnable {
             } else {
                 return new Container("error", "Failed to quit chat: " + params.get("chatname"));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
@@ -353,15 +353,9 @@ public class ClientHandler implements Runnable {
             return new Container("error", "Invalid data!");
         }
         try {
-            Map<String, String> params = parseData((String) data);
-            if (params.isEmpty()) {
-                System.out.println("Parsed params are empty");
-                return new Container("error", "Invalid data!");
-            }
-            
             List<Message> history = chatHandler.getHistory(chatroom.name(), (Timestamp) data);
             return new Container("get-history-success", history);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
