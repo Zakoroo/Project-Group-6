@@ -37,8 +37,12 @@ public class Container implements Serializable {
                 '}';
     }
 
-    public Object getMessage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMessage'");
-    }
+        public String getMessage() {
+            if (data instanceof String) {
+                return (String) data;
+            }
+            return "Invalid message format";
+        }
+
+
 }

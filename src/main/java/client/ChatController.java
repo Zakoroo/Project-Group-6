@@ -17,17 +17,8 @@ public class ChatController {
     }
 
     public void handleCreateChat(String chatname) {
-        try {
-            Container request = new Container("create-chat", "chatname=" + chatname);
-            Container response = client.sendRequest(request);
-
-            if (!response.getMessage().equals("success")) {
-                view.showAlert("Failed to create chat: " + response.getMessage());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            view.showAlert("Server communication error.");
-        }
+     Container request = new Container("create-chat", "chatname=");
+     client.sendRequest(request);
     }
 
     public void handleLogout() {

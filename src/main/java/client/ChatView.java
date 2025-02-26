@@ -27,7 +27,7 @@ public class ChatView {
         VBox layout = new VBox(10, chatLabel, chatField, createChatButton, logoutButton);
         layout.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(layout, 300, 200);
+        Scene scene = new Scene(layout, 500, 400);
         stage.setScene(scene);
         stage.setTitle("Chat Room");
         stage.show();

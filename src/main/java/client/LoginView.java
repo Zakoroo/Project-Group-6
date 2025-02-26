@@ -29,7 +29,7 @@ public class LoginView {
         VBox layout = new VBox(10, usernameLabel, usernameField, passwordLabel, passwordField, loginButton, signupButton);
         layout.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(layout, 300, 250);
+        Scene scene = new Scene(layout, 600, 400 );
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();
