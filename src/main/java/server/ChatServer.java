@@ -9,7 +9,6 @@ import com.zaxxer.hikari.*;
 
 public class ChatServer {
     public static final int PORT = 8005;
-    NotificationHandler notificationHandler;
 
     public ChatServer() {
         // Fetch info for and create a connection pool
@@ -17,6 +16,34 @@ public class ChatServer {
         HikariDataSource dataSource = new HikariDataSource(config);
 
         // Start up the notificaiton service
+        try (
+            ServerSocket serverSocket = new ServerSocket(PORT);
+        ) {
+            // Create a server socket
+            System.out.println("Server started. Listening on port " + PORT);
+
+            // Create a notification handler with access to the database
+            Connection connection = dbConnectionInit();
+            NotificationHandler notificationHandler = new NotificationHandler(connection);
+            Thread notificationThread = new Thread(notificationHandler);
+            notificationThread.start();
+            
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                // Create a new client handler thread
+                ClientHandler clientHandler = new ClientHandler(clientSocket, dataSource, notificationHandler);
+                Thread thread = new Thread(clientHandler);
+                thread.start();
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Ensure closing the connection pool
+            dataSource.close();
+        }
+    }
+
+    private Connection dbConnectionInit() throws IOException, SQLException {
         try (FileInputStream fis = new FileInputStream("src/main/resources/db/config.properties")) {
             Properties props = new Properties();
             props.load(fis);
@@ -26,34 +53,7 @@ public class ChatServer {
             String user = props.getProperty("db.user");
             String password = props.getProperty("db.password");
             String url = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
-            Connection connection = DriverManager.getConnection(url, user, password);
-            notificationHandler = new NotificationHandler(connection);
-            Thread notificationThread = new Thread(notificationHandler);
-            notificationThread.start();
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
-            dataSource.close();
-            return;
-        }
-
-        // Create a server socket
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Server started. Listening on port " + PORT);
-
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-
-                // Create a new client handler thread
-                ClientHandler clientHandler = new ClientHandler(clientSocket, dataSource);
-                Thread thread = new Thread(clientHandler);
-                thread.start();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            // Ensure closing the connection pool
-            dataSource.close();
+            return DriverManager.getConnection(url, user, password);
         }
     }
 }

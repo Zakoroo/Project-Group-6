@@ -2,6 +2,8 @@ package server;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+
 import com.zaxxer.hikari.HikariDataSource;
 
 // local libraries
@@ -90,8 +92,8 @@ public class ChatHandler {
         return false;
     }
 
-    public ArrayList<Message> getHistory(String chatName, Timestamp timestamp) {
-        ArrayList<Message> history = new ArrayList<>();
+    public List<Message> getHistory(String chatName, Timestamp timestamp) {
+        List<Message> history = new ArrayList<>();
         String sql = "SELECT * FROM Messages WHERE chatname = ? AND timestamp > ?;";
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
