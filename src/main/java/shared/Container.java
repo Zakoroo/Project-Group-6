@@ -3,7 +3,7 @@ package shared;
 import java.io.*;
 
 public class Container implements Serializable {
-    private static final long serialVersionUID = 404;
+    private static final long serialVersionUID = 42L;
     
     private String command;
     private Object data; 
