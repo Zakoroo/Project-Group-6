@@ -3,10 +3,7 @@ package server;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.zaxxer.hikari.HikariDataSource;
-
-// local libraries
 import shared.*;
 
 public class ChatHandler {
@@ -30,21 +27,23 @@ public class ChatHandler {
         return false;
     }
 
-    public ChatRoom findChat(String chatName) {
-        String sql = "SELECT * FROM ChatRooms WHERE chatname = ?;";
+    public List<ChatRoom> findChat(String searchTerm) {
+        List<ChatRoom> chatRooms = new ArrayList<>();
+        String sql = "SELECT * FROM ChatRooms WHERE chatname ~ ? ORDER BY chatname ASC;";
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, chatName);
+            ps.setString(1, searchTerm);
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
+            while (rs.next()) {
+                String chatname = rs.getString("chatname");
                 String chatHost = rs.getString("chathost");
-                return new ChatRoom(chatName, chatHost);
+                chatRooms.add(new ChatRoom(chatname, chatHost));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return chatRooms;
     }
 
     public boolean joinChat(String username, String chatname) {
@@ -59,6 +58,24 @@ public class ChatHandler {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public ChatRoom connectChat(String username, String chatname) {
+        String sql = "SELECT * FROM Chatrooms WHERE chatname = ? AND EXISTS(SELECT 1 FROM ChatMembers WHERE chatname = ? AND username = ?);";
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, chatname);
+            ps.setString(2, chatname);
+            ps.setString(3, username);
+            ResultSet rs = ps.executeQuery();
+            
+            if(rs.next()) {
+                return new ChatRoom(chatname, rs.getString("chathost"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public boolean quitChat(String username, String chatname) {
