@@ -92,7 +92,7 @@ public class ClientDriver {
             responseObject = ois.readObject();
             System.out.println("Container received");
             responseContainer = (Container) responseObject;
-            System.out.println(responseContainer);  */
+            System.out.println(responseContainer);
 
 
              // Create quit-chat request request
