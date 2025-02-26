@@ -282,6 +282,7 @@ public class ClientHandler implements Runnable {
     }
 
     private Container handleQuitChat(Object data) {
+
         if (username == null) {
             return new Container("error", "User not logged in!");
         }

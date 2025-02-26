@@ -22,7 +22,7 @@ public class ClientDriver {
     
             //request signin
             System.out.println("Signin request sent");
-            Container singinRequest = new Container("signin", "username=abood&password=123456");
+            Container singinRequest = new Container("signin", "username=alzeine&password=87654321");
             oos.writeObject(singinRequest);
             oos.flush();
 
@@ -31,33 +31,6 @@ public class ClientDriver {
             responseObject = ois.readObject();
             responseContainer = (Container) responseObject;
             System.out.println(responseContainer); 
-
-
-/*          // Create Join-chat request request
-            System.out.println("join chat request sent");
-            Container joinchatrequest = new Container("join-chat", "username=kebab&chatname=Intruders");
-            oos.writeObject(joinchatrequest);
-            oos.flush();
-
-            // Join-chat response
-            responseObject = ois.readObject();
-            System.out.println("Container received");
-            responseContainer = (Container) responseObject;
-            System.out.println(responseContainer); */
-
-
-/*          // Create quit-chat request request
-            System.out.println("quit chat request sent");
-            Container quitchatrequest = new Container("QuitChat", "username=abood&chatname=Intruders");
-            oos.writeObject(quitchatrequest);
-            oos.flush();
-            
-            // Create quit-chat response
-            responseObject = ois.readObject();
-            System.out.println("Container received");
-            responseContainer = (Container) responseObject;
-            System.out.println(responseContainer); */
-
 
             //Create connect-chat request
             System.out.println("connect-chat request sent");
@@ -82,8 +55,7 @@ public class ClientDriver {
             System.out.println("Container received");
             responseContainer = (Container) responseObject;
             System.out.println(responseContainer);
-            
-
+          
         } catch (Exception e) {
             e.printStackTrace();
         }
