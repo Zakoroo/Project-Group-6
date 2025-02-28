@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import shared.Container;
 
 public class ClientConnection {
@@ -13,7 +12,7 @@ public class ClientConnection {
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private boolean running = true;
-    private final ExecutorService senderPool = Executors.newFixedThreadPool(10);
+    private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
     public ClientConnection(String serverAddress, int port) throws IOException {
         this.socket = new Socket(serverAddress, port);
@@ -31,9 +30,9 @@ public class ClientConnection {
                 while (running) {
                     Container response = (Container) ois.readObject();
                     System.out.println("Received: " + response);
-                    handleIncomingMessage(response);
+                    // Handle notifications or incoming data if needed
                 }
-            } catch (IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 if (running) {
                     System.err.println("Connection lost. Trying to reconnect...");
                     try {
@@ -43,8 +42,6 @@ public class ClientConnection {
                         System.err.println("Failed to reconnect: " + ex.getMessage());
                     }
                 }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
         });
         receiver.setDaemon(true);
@@ -62,39 +59,8 @@ public class ClientConnection {
         System.out.println("Reconnected successfully!");
     }
 
-    private void handleIncomingMessage(Container response) {
-        javafx.application.Platform.runLater(() -> {
-            switch (response.getCommand()) {
-                case "error":
-                    System.out.println("Error: " + response.getData());
-                    break;
-                case "success":
-                    System.out.println("Success: " + response.getData());
-                    break;
-                case "message":
-                    System.out.println(" New Message: " + response.getData());
-                    break;
-                default:
-                    System.out.println("Unknown Response: " + response);
-                    break;
-            }
-        });
-    }
-
-    public void sendRequest(Container request) {
-        senderPool.submit(() -> {
-            try {
-                oos.writeObject(request);
-                oos.flush();
-                System.out.println("Sent: " + request);
-            } catch (IOException e) {
-                System.err.println("Failed to send request: " + e.getMessage());
-            }
-        });
-    }
-
     public Future<Container> sendRequestWithResponse(Container request) {
-        return senderPool.submit(() -> {
+        return threadPool.submit(() -> {
             try {
                 oos.writeObject(request);
                 oos.flush();
@@ -110,7 +76,7 @@ public class ClientConnection {
     public void close() {
         if (!running) return;
         running = false;
-        senderPool.shutdown();
+        threadPool.shutdown();
         try {
             if (oos != null) oos.close();
             if (ois != null) ois.close();
