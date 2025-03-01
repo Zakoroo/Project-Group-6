@@ -3,6 +3,7 @@ import shared.Container;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 
 public class ClientDriver {
@@ -15,54 +16,56 @@ public class ClientDriver {
              ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
 
             RequestHandler requestHandler = new RequestHandler(oos, ois);
-
-/*             // 1. Signup
-            System.out.println("Testing signup...");
-            requestHandler.signup("TestNick", "TestUser", "test@example.com", "password123");  */
-
+ 
+            // 1. Signup
+            //requestHandler.signup("TestNick", "TestUser", "test@example.com", "password123");
+ 
             // 2. Signin
-            System.out.println("Testing signin...");
             requestHandler.signin("TestUser", "password123"); 
-/* 
-             // 3. Create Chatroom
-            System.out.println("Testing create chat...");
-            requestHandler.createChat("TestChat"); */
-/* 
+ 
+            // 3. Create Chatroom
+            //requestHandler.createChat("TestChat"); 
+
             // 4. Join Chatroom
-            System.out.println("Testing join chat...");
-            requestHandler.joinChat("TestChat"); */
-/*
+            //requestHandler.joinChat("TestChat");
+
             // 5. Connect to Chatroom
-            System.out.println("Testing connect chat...");
             requestHandler.connectChat("TestChat");
 
+            String imagePath = "C:\\Users\\user\\Desktop\\cat.jpg"; //change the path 
+            byte[] imageData = convertImageToByteArray(imagePath);
+
             // 6. Find Chat
-            System.out.println("Testing find chat...");
-            requestHandler.findChat("Test");
+            //requestHandler.findChat("Test");
 
             // 7. Send Text Message
-            System.out.println("Testing send message (text)...");
-            requestHandler.sendMessage("Hello, this is a test message!");
+            //requestHandler.sendMessage("Hello, this is a test message!");
 
             // 8. Send Image
-            System.out.println("Testing send message (image)..."); 
-            byte[] dummyImageData = new byte[]{1, 2, 3, 4, 5}; // Simulating binary data
-            requestHandler.sendMessage(dummyImageData);
-
+            requestHandler.sendMessage(imageData);
+ 
             // 9. Get Chat History
-            System.out.println("Testing get history...");
             requestHandler.getHistory(new Timestamp(System.currentTimeMillis() - 36000000)); // 10 hours ago
 
             // 10. Quit Chat
-            System.out.println("Testing quit chat...");
-            requestHandler.quitChat("TestChat");
+            //requestHandler.quitChat("TestChat");
 
             // 11. Delete User
-            System.out.println("Testing delete user...");
-            requestHandler.deleteUser("password123"); */
+            //requestHandler.deleteUser("password123");
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
+
+    private static byte[] convertImageToByteArray(String imagePath) {
+        File imageFile = new File(imagePath);
+        try {
+            return Files.readAllBytes(imageFile.toPath());
+        } catch (IOException e) {
+            System.err.println("Error reading image file: " + e.getMessage());
+            return null;
+        }
+    }
+
 }
