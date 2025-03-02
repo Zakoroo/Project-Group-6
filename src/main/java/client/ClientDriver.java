@@ -22,40 +22,39 @@ public class ClientDriver {
     
             //request signin
             System.out.println("Signin request sent");
-            Container singinRequest = new Container("signin", "username=alzeine&password=87654321");
+            Container singinRequest = new Container("signin", "username=Kebab&password=123456");
             oos.writeObject(singinRequest);
             oos.flush();
-
+            
             // Signin response
             System.out.println("Container received");
             responseObject = ois.readObject();
             responseContainer = (Container) responseObject;
             System.out.println(responseContainer); 
 
-            //Create connect-chat request
+            //connect-chat request
             System.out.println("connect-chat request sent");
-            Container connectchatrequest = new Container("connect-chat", "chatname=Intruders");
-            oos.writeObject(connectchatrequest);
+            Container connecContainer = new Container("connect-chat", "chatname=Example chatroom");
+            oos.writeObject(connecContainer);
             oos.flush();
 
-            //connect-chat response
-            responseObject = ois.readObject();
+            // connect response
             System.out.println("Container received");
+            responseObject = ois.readObject();
             responseContainer = (Container) responseObject;
-            System.out.println(responseContainer);
+            System.out.println(responseContainer); 
 
-            //Create send-message request request
-            System.out.println("send message request sent");
-            Container sendmessagerequest = new Container("send-message", "hello world");
-            oos.writeObject(sendmessagerequest);
+            //Create create-chat request
+            System.out.println("send-message request sent");
+            Container messageContainer = new Container("send-message", "Hello this is a testing message!");
+            oos.writeObject(messageContainer);
             oos.flush();
 
-            // Create send-message response
-            responseObject = ois.readObject();
+            // message sending response
             System.out.println("Container received");
+            responseObject = ois.readObject();
             responseContainer = (Container) responseObject;
-            System.out.println(responseContainer);
-          
+            System.out.println(responseContainer); 
         } catch (Exception e) {
             e.printStackTrace();
         }
