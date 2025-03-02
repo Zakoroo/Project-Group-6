@@ -2,54 +2,69 @@ package server;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 import com.zaxxer.hikari.*;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-// local libraries
 import shared.*;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private AccountHandler accountHandler;
     private ChatHandler chatHandler;
+    private NotificationHandler notificationHandler;
     private ChatRoom chatroom;
     private String username;
 
-    public ClientHandler(Socket clientSocket, HikariDataSource dataSource) {
+    private ObjectOutputStream oos;
+    private ObjectInputStream ois;
+
+    public ClientHandler(Socket clientSocket, HikariDataSource dataSource, NotificationHandler notificationHandler) {
         this.clientSocket = clientSocket;
         this.accountHandler = new AccountHandler(dataSource);
         this.chatHandler = new ChatHandler(dataSource);
+        this.notificationHandler = notificationHandler;
     }
 
     @Override
     public void run() {
-        try (
-                // Set up input and output stream for communication
-                ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
-            ) {
-
-
+        try {
+            // Do not change order: it will cause deadlock
+            oos = new ObjectOutputStream(clientSocket.getOutputStream());
+            ois = new ObjectInputStream(clientSocket.getInputStream());
             Object object;
-            Container container;
+            Container request, response;
 
             while ((object = ois.readObject()) != null) {
                 if (object instanceof Container) {
-                    container = (Container) object;
-                    oos.writeObject(executeCommand(container));
+                    request = (Container) object;
+                    response = executeCommand(request);
+                    // Propagate the correlation ID from the request to the response
+                    response.setId(request.getId());
+                    oos.writeObject(response);
                     oos.flush();
                 } else {
-                    Container errorResponse = new Container("error", "The object is not of type container.");
-                    oos.writeObject(errorResponse);
+                    Container errorContainer = new Container("error", "The object is not of type Container.");
+                    oos.writeObject(errorContainer);
                     oos.flush();
                 }
             }
         } catch (Exception e) {
-            System.out.println("A client disconnected or an error occurred.");
+            System.out.println("Client disconnected: " + clientSocket.getRemoteSocketAddress());
+            // Remove user from notification service on disconnect
+            if (username != null && chatroom != null) {
+                notificationHandler.removeListener(chatroom.name(), oos);
+            }
         } finally {
             try {
-                clientSocket.close();
+                if (oos != null)
+                    oos.close();
+                if (ois != null)
+                    ois.close();
+                if (clientSocket != null)
+                    clientSocket.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -70,176 +85,287 @@ public class ClientHandler implements Runnable {
                 return handleCreateChat(data);
             case "join-chat":
                 return handleJoinChat(data);
+            case "connect-chat":
+                return handleConnectChat(data);
             case "find-chat":
                 return handleFindChat(data);
-            case "QuitChat":
+            case "quit-chat":
                 return handleQuitChat(data);
-            case "SendMessage":
+            case "send-message":
                 return handleSendMessage(data);
-            case "GetHistory":
+            case "get-history":
                 return handleGetHistory(data);
             default:
-                return new Container("error", "Command nonexistent!");
+                System.out.println("Received unknown command: " + command);
+                return new Container("error", "Unknown command: " + command);
         }
     }
 
-    // Handle user information
+    // User Account Management
     private Container handleSignup(Object data) {
-        Map<String, String> params;
-        boolean success = false;
-
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
         try {
-            if (data instanceof String) {
-                System.out.println("Received data: " + data);
-                params = parseData((String) data);
-                if (params.keySet().isEmpty()) {
-                    System.out.println("Parsed params are null");
-                    return new Container("error", "Invalid data!");
-                }
-                success = accountHandler.signup(params.get("nickname"), params.get("username"), params.get("email"),
-                        params.get("password"));
-                if (success) {
-                    username = params.get("username");
-                    return new Container("signup-success", "user: " + username);
-                } else {
-                    return new Container("error", "something went wrong");
-                }
+            String dataStr = (String) data;
+            System.out.println("Received data: " + dataStr);
+            Map<String, String> params = parseData(dataStr);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
+            }
+            boolean success = accountHandler.signup(
+                    params.get("nickname"),
+                    params.get("username"),
+                    params.get("email"),
+                    params.get("password"));
+            if (success) {
+                username = params.get("username");
+                return new Container("signup-success", "user: " + username);
+            } else {
+                return new Container("error", "Something went wrong during signup");
             }
         } catch (IOException | SQLException e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
-
-        return new Container("error", "Invalid data!");
     }
 
     private Container handleSignin(Object data) {
-        Map<String, String> params;
-        boolean success = false;
-
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
         try {
-            if (data instanceof String) {
-                params = parseData((String) data);
-                if (params.keySet().isEmpty()) {
-                    System.out.println("Parsed params are null");
-                    return new Container("error", "Invalid data!");
-                }
-
-                success = accountHandler.signin(params.get("username"), params.get("password"));
-                if (success) {
-                    username = params.get("username");
-                    return new Container("signin-success", "You are now signed in as user: " + username);
-                } else {
-                    return new Container("error", "Invalid credentials!");
-                }
+            Map<String, String> params = parseData((String) data);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
+            }
+            boolean success = accountHandler.signin(params.get("username"), params.get("password"));
+            if (success) {
+                username = params.get("username");
+                return new Container("signin-success", "You are now signed in as user: " + username);
+            } else {
+                return new Container("error", "Invalid credentials!");
             }
         } catch (IOException | SQLException e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
-
-        return new Container("error", "Invalid data!");
     }
 
     private Container handleDeleteUser(Object data) {
-        Map<String, String> params;
-        boolean success = false;
-        String tmpUser = username;
-
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
         try {
-            if (username == null) {
-                return new Container("error", "User not logged in!");
-            } else if (data instanceof String) {
-                // Extract the parameters from the data object
-                params = parseData((String) data);
-
-                // Check if the parameters are empty
-                if (params.keySet().isEmpty()) {
-                    System.out.println("Parsed params are null");
-                    return new Container("error", "Invalid data!");
+            Map<String, String> params = parseData((String) data);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
+            }
+            boolean success = accountHandler.deleteUser(username, params.get("password"));
+            if (success) {
+                if (chatroom != null) {
+                    notificationHandler.removeListener(chatroom.name(), oos);
                 }
-
-                // Retreive the result of the query pass/fail
-                success = accountHandler.deleteUser(username, params.get("password"));
-                if (success) {
-                    // NOTE: Temporarly it is enough just to set the values to null
-                    username = null;
-                    chatroom = null;
-                    // TODO: Make sure to unsubsribe from the current channel you are listening to
-
-                    return new Container("delete-user-success", "User deleted: " + tmpUser);
-                } else {
-                    return new Container("error", "Invalid credentials!");
-                }
+                String tmpUser = username;
+                username = null;
+                chatroom = null;
+                return new Container("delete-user-success", "User deleted: " + tmpUser);
+            } else {
+                return new Container("error", "Invalid credentials!");
             }
         } catch (IOException | SQLException e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
-
-        return new Container("error", "Invalid data!");
     }
 
-    // Handle chatroom manipulation
+    // Chatroom Management
     private Container handleCreateChat(Object data) {
-        Map<String, String> params;
-        boolean success = false;
-
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
         try {
-            if (username == null) { // Check if user is signed in
-                return new Container("error", "User not logged in!");
-            } else if (data instanceof String) { // Check if data is of correct type
-                System.out.println("Received data: " + data);
-                params = parseData((String) data);
-                if (params.keySet().isEmpty()) { // Check that the user entered correct parameters
-                    System.out.println("Parsed params are null");
-                    return new Container("error", "Invalid data!");
-                }
-                success = chatHandler.createChat(params.get("chatname"), username);
-                if (success) { 
-                    return new Container("create-chat-success",
-                            "Chat created successfully with name: " + params.get("chatname"));
-                } else {
-                    return new Container("error", "Chatroom already exist");
-                }
+            Map<String, String> params = parseData((String) data);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
             }
-        } catch (IOException e) {
+            boolean success = chatHandler.createChat(params.get("chatname"), username);
+            if (success) {
+                return new Container("create-chat-success",
+                        "Chat created successfully with name: " + params.get("chatname"));
+            } else {
+                return new Container("error", "Chatroom already exists");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
         }
-
-        return new Container("error", "Invalid data!");
-    }
-
-    private Container handleFindChat(Object data) {
-        // TODO: implement this method
-        return null;
-
     }
 
     private Container handleJoinChat(Object data) {
-        // TODO: implement this method
-        return null;
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
+        try {
+            Map<String, String> params = parseData((String) data);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
+            }
+            boolean success = chatHandler.joinChat(username, params.get("chatname"));
+            if (success) {
+                return new Container("join-chat-success",
+                        "User " + username + " joined chat: " + params.get("chatname"));
+            } else {
+                return new Container("error", "Failed to join chat: " + params.get("chatname"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
+    }
 
+    private Container handleConnectChat(Object data) {
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
+        try {
+            Map<String, String> params = parseData((String) data);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
+            }
+            chatroom = chatHandler.connectChat(username, params.get("chatname"));
+            System.out.println("User connecting to chatroom: " + chatroom.name());
+
+            if(chatroom != null) {
+                notificationHandler.addListener(params.get("chatname"), oos);
+                return new Container("connect-chat-success",
+                        "User " + username + " connected to chat: " + params.get("chatname"));
+            } else {
+                return new Container("error", "Chatroom not joined or chatroom nonexistent!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
+    }
+
+    private Container handleFindChat(Object data) {
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
+        try {
+            Map<String, String> params = parseData((String) data);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
+            }
+            List<ChatRoom> chatRooms = chatHandler.findChat(params.get("tofind"));
+            return new Container("find-chat-success", chatRooms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
     }
 
     private Container handleQuitChat(Object data) {
-        // TODO: implement this method
-        return null;
 
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (!(data instanceof String) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
+        try {
+            Map<String, String> params = parseData((String) data);
+            if (params.isEmpty()) {
+                System.out.println("Parsed params are empty");
+                return new Container("error", "Invalid data!");
+            }
+            boolean success = chatHandler.quitChat(username, params.get("chatname"));
+            if (success) {
+                return new Container("quit-chat-success",
+                        "User " + username + " quit chat: " + params.get("chatname"));
+            } else {
+                return new Container("error", "Failed to quit chat: " + params.get("chatname"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
     }
 
-    // Handle message sending and receiving
+    // Message Handling
     private Container handleSendMessage(Object data) {
-        // TODO: implement this method
-        return null;
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (chatroom == null) {
+            return new Container("error", "User not connected to a chatroom!");
+        }
+        if (!(data instanceof String || data instanceof byte[]) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
+        try {
+            // Complie the user sent data into a message (time is automatically set by the database)
+            Message msg;
+            if(data instanceof String) {
+                msg = new Message(username, (String) data, null);
+            } 
+            else {
+                msg = new Message(username, (byte[]) data, null);
+            }
 
+            boolean success = chatHandler.sendMessage(msg, chatroom.name());
+            if (success) {
+                return new Container("send-message-success",
+                        "Message send to: " + chatroom.name());
+            } else {
+                return new Container("error", "Failed to send message to chat: " + chatroom.name());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
     }
 
     private Container handleGetHistory(Object data) {
-        // TODO: implement this method
-        return null;
-
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        if (chatroom == null) {
+            return new Container("error", "User not connected to a chatroom!");
+        }
+        if (!(data instanceof Timestamp) || data == null) {
+            return new Container("error", "Invalid data!");
+        }
+        try {
+            List<Message> history = chatHandler.getHistory(chatroom.name(), (Timestamp) data);
+            return new Container("get-history-success", history);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
     }
 
     private Map<String, String> parseData(String s) throws IOException {
@@ -250,11 +376,11 @@ public class ClientHandler implements Runnable {
         String[] pairs = s.split("&");
         for (String pair : pairs) {
             String[] keyValue = pair.split("=", 2);
-            String key = keyValue[0];
-            String value = keyValue[1];
-            params.put(key, value);
+            if (keyValue.length < 2) {
+                continue; // Skip malformed pair
+            }
+            params.put(keyValue[0], keyValue[1]);
         }
         return params;
     }
-
 }

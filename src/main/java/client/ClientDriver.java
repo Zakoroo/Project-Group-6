@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import client.controllers.SignInController;
+
 import java.io.IOException;
 
 public class ClientDriver extends Application {
@@ -16,15 +17,15 @@ public class ClientDriver extends Application {
             // Connect to the server
             clientConnection = new ClientConnection("127.0.0.1", 8005);
 
-            // Load the sign-in view
+            // Load the sign-in view FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/signInView.fxml"));
             Scene scene = new Scene(loader.load());
 
-            // Inject client connection into the controller
+            // Inject client connection into the SignInController
             SignInController controller = loader.getController();
             controller.setClientConnection(clientConnection);
 
-            // Load stylesheet (optional)
+            // (Optional) load stylesheet
             scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
 
             primaryStage.setTitle("Chat Application");

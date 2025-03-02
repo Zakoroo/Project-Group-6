@@ -1,59 +1,22 @@
-/* General styles */
-.root {
-    -fx-background-color: #f1f5f8;
-    -fx-font-family: Arial, sans-serif;
-}
+/* style.css: Global styling for Chat Application */
 
-/* Labels */
-.label {
-    -fx-text-fill: #0052a3;
-    -fx-font-size: 14px;
+/* Root scene style (optional) */
+.root {
+    -fx-background-color: #fafafa;
 }
 
 /* Buttons */
 .button {
-    -fx-background-radius: 5;
-    -fx-padding: 8 12;
-    -fx-font-size: 14px;
-    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
 }
 
-.button:hover {
-    -fx-opacity: 0.8;
+/* Text fields */
+.text-field {
+    -fx-prompt-text-fill: #aaaaaa;
 }
 
-.button:pressed {
-    -fx-opacity: 0.6;
-}
-
-/* Specific Button Styles */
-.button[text="Login"] {
-    -fx-background-color: #007bff;
-}
-
-.button[text="Sign Up"] {
-    -fx-background-color: #4b91e2;
-}
-
-.button[text="Send"] {
-    -fx-background-color: #007bff;
-}
-
-.button[text="Upload Image"] {
-    -fx-background-color: #4b91e2;
-}
-
-/* TextFields */
-.text-field, .password-field {
-    -fx-border-color: #a6c6ed;
-    -fx-border-radius: 5;
-    -fx-padding: 5;
-    -fx-font-size: 14px;
-}
-
-/* Chat area */
-.text-area {
-    -fx-border-color: #a6c6ed;
-    -fx-border-radius: 5;
+/* Example label styling */
+.label {
     -fx-font-size: 14px;
 }

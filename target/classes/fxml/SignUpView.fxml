@@ -123,9 +123,12 @@
                               prefWidth="345.0"
                               spacing="48.0">
                             <children>
+                                <!-- Link calls SignUpController.switchToSignIn(...) -->
                                 <Hyperlink fx:id="alreadyregistered"
                                            prefHeight="24.0"
-                                           text="Already registered?" />
+                                           text="Already registered?"
+                                           onAction="#switchToSignIn" />
+
                                 <Button fx:id="signUp"
                                         defaultButton="true"
                                         mnemonicParsing="false"
@@ -148,7 +151,7 @@
                               prefHeight="36.0"
                               prefWidth="345.0">
                             <children>
-                                <Label fx:id="errorlabel"
+                                <Label fx:id="errorLabel"
                                        text="Error message placeholder"
                                        textFill="#c04646" />
                             </children>

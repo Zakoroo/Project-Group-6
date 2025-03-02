@@ -69,17 +69,24 @@
       <artifactId>postgresql</artifactId>
       <version>42.7.5</version>
     </dependency>
+   <dependency>
+    <groupId>de.jensd</groupId>
+    <artifactId>fontawesomefx-fontawesome</artifactId>
+    <version>4.7.0-9.1.2</version>
+</dependency>
+
+
   </dependencies>
 
   <build>
-  <resources>
-    <resource>
+    <resources>
+      <resource>
         <directory>src/main/resources</directory>
         <includes>
-            <include>**/*</include>
+          <include>**/*</include>
         </includes>
-    </resource>
-</resources>
+      </resource>
+    </resources>
 
     <plugins>
       <plugin>

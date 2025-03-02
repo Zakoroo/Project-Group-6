@@ -60,7 +60,7 @@
 
                         <HBox alignment="CENTER" prefHeight="43.0" prefWidth="345.0" spacing="48.0">
                             <children>
-                                <Hyperlink fx:id="register" text="Register now" />
+                                <Hyperlink fx:id="register" text="Register now" onAction="#switchToSignUp" />
                                 <Button fx:id="signin" 
                                         text="SIGN IN" 
                                         textFill="WHITE"
@@ -77,7 +77,7 @@
 
                         <HBox alignment="CENTER" prefHeight="36.0" prefWidth="345.0">
                             <children>
-                                <Label fx:id="errorlabel" 
+                                <Label fx:id="errorLabel" 
                                        text="Error message placeholder" 
                                        textFill="#c04646" />
                             </children>
