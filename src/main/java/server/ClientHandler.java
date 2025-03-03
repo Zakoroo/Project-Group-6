@@ -2,12 +2,9 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 import com.zaxxer.hikari.*;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import shared.*;
 
 public class ClientHandler implements Runnable {
@@ -35,19 +32,15 @@ public class ClientHandler implements Runnable {
             oos = new ObjectOutputStream(clientSocket.getOutputStream());
             ois = new ObjectInputStream(clientSocket.getInputStream());
             Object object;
-            Container request, response;
+            Container container;
 
             while ((object = ois.readObject()) != null) {
                 if (object instanceof Container) {
-                    request = (Container) object;
-                    response = executeCommand(request);
-                    // Propagate the correlation ID from the request to the response
-                    response.setId(request.getId());
-                    oos.writeObject(response);
+                    container = (Container) object;
+                    oos.writeObject(executeCommand(container));
                     oos.flush();
                 } else {
-                    Container errorContainer = new Container("error", "The object is not of type Container.");
-                    oos.writeObject(errorContainer);
+                    oos.writeObject(new Container("error", "The object is not of type container."));
                     oos.flush();
                 }
             }
@@ -121,7 +114,7 @@ public class ClientHandler implements Runnable {
                     params.get("password"));
             if (success) {
                 username = params.get("username");
-                return new Container("signup-success", "user: " + username);
+                return new Container("signup-success", username);
             } else {
                 return new Container("error", "Something went wrong during signup");
             }
@@ -144,7 +137,7 @@ public class ClientHandler implements Runnable {
             boolean success = accountHandler.signin(params.get("username"), params.get("password"));
             if (success) {
                 username = params.get("username");
-                return new Container("signin-success", "You are now signed in as user: " + username);
+                return new Container("signin-success", username);
             } else {
                 return new Container("error", "Invalid credentials!");
             }
@@ -225,10 +218,12 @@ public class ClientHandler implements Runnable {
                 System.out.println("Parsed params are empty");
                 return new Container("error", "Invalid data!");
             }
-            boolean success = chatHandler.joinChat(username, params.get("chatname"));
-            if (success) {
-                return new Container("join-chat-success",
-                        "User " + username + " joined chat: " + params.get("chatname"));
+
+            ChatRoom joinedChat = chatHandler.joinChat(username, params.get("chatname"));
+
+            // TODO: return chatroom instead of chatname
+            if (joinedChat != null) {
+                return new Container("join-chat-success", joinedChat);
             } else {
                 return new Container("error", "Failed to join chat: " + params.get("chatname"));
             }
@@ -256,8 +251,7 @@ public class ClientHandler implements Runnable {
 
             if(chatroom != null) {
                 notificationHandler.addListener(params.get("chatname"), oos);
-                return new Container("connect-chat-success",
-                        "User " + username + " connected to chat: " + params.get("chatname"));
+                return new Container("connect-chat-success", params.get("chatname"));
             } else {
                 return new Container("error", "Chatroom not joined or chatroom nonexistent!");
             }
@@ -304,8 +298,7 @@ public class ClientHandler implements Runnable {
             }
             boolean success = chatHandler.quitChat(username, params.get("chatname"));
             if (success) {
-                return new Container("quit-chat-success",
-                        "User " + username + " quit chat: " + params.get("chatname"));
+                return new Container("quit-chat-success", params.get("chatname"));
             } else {
                 return new Container("error", "Failed to quit chat: " + params.get("chatname"));
             }

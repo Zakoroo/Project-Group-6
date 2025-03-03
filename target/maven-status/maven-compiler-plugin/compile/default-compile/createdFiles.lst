@@ -9,6 +9,7 @@ shared/ChatRoom.class
 client/ClientConnection.class
 server/NotificationHandler.class
 client/ClientDriver.class
+client/models/ChatModel.class
 server/ClientHandler.class
 shared/Container.class
 server/ServerDriver.class

@@ -7,7 +7,6 @@ public class Container implements Serializable {
     
     private String command;
     private Object data; 
-    private String id;  // Added correlation ID
 
     public Container(String command, Object data) {
         this.command = command;
@@ -22,10 +21,6 @@ public class Container implements Serializable {
         return data;
     }
     
-    public String getId() {
-        return id;
-    }
-    
     public void setCommand(String command) {
         this.command = command;
     }
@@ -34,16 +29,12 @@ public class Container implements Serializable {
         this.data = data;
     }
     
-    public void setId(String id) {
-        this.id = id;
-    }
 
     @Override
     public String toString() {
         return "Container{" +
                 "command='" + command + '\'' +
                 ", data=" + data +
-                ", id=" + id +
                 '}';
     }
 }

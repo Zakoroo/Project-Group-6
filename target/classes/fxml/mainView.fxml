@@ -13,14 +13,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="613.0" prefWidth="881.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.ChatController">
+<!-- Main layout container -->
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="613.0" prefWidth="881.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    
    <!-- Top section: User info and sign out button -->
    <top>
-      <HBox fx:id="topHBox" alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #92c1ff;" BorderPane.alignment="BOTTOM_RIGHT">
+      <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #92c1ff;" BorderPane.alignment="BOTTOM_RIGHT">
          <children>
             <!-- User profile image -->
-            <ImageView fx:id="profileImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../pictures/user_1.png" />
                </image>
@@ -36,7 +38,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <children>
-                  <Button fx:id="signOutButton" onAction="#handleSignOut" mnemonicParsing="false" style="-fx-background-radius: 8px; -fx-font-weight: bold; -fx-background-color: #f38078;" text="SIGN OUT">
+                  <Button fx:id="SignOutBtn" mnemonicParsing="false" style="-fx-background-radius: 8px; -fx-font-weight: bold; -fx-background-color: #f38078;" text="SIGN OUT">
                      <graphic>
                         <FontAwesomeIconView fill="#a82b2b" glyphName="SIGN_OUT" size="24" />
                      </graphic>
@@ -52,20 +54,20 @@
    
    <!-- Left section: Joined groups list and add group button -->
    <left>
-      <VBox fx:id="leftVBox" spacing="10.0" style="-fx-background-color: white;">
+      <VBox spacing="10.0" style="-fx-background-color: white;">
          <children>
             <!-- Joined groups label -->
             <Label style="-fx-font-weight: bold;" text="Joined groups" />
             <!-- Scrollable list of joined groups -->
-            <ScrollPane fx:id="groupsScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefWidth="200.0" style="-fx-border-color: white;" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="200.0" style="-fx-border-color: white;" VBox.vgrow="ALWAYS">
                <content>
-                  <ListView fx:id="groupsListView" style="-fx-background-radius: 4px;" />
+                  <ListView fx:id="chatListView" style="-fx-background-radius: 4px;" />
                </content>
             </ScrollPane>
             <!-- Add group button -->
-            <HBox fx:id="addGroupHBox" alignment="CENTER_LEFT" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" VBox.vgrow="NEVER">
+            <HBox alignment="CENTER_LEFT" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" VBox.vgrow="NEVER">
                <children>
-                  <Button fx:id="addGroupButton" onAction="#handleAddGroup" mnemonicParsing="false" style="-fx-background-radius: 8px; -fx-font-weight: bold;" text="ADD GROUP">
+                  <Button fx:id="addGroupBtn" mnemonicParsing="false" onAction="#handleAddGroup" style="-fx-background-radius: 8px; -fx-font-weight: bold;" text="ADD GROUP">
                      <graphic>
                         <FontAwesomeIconView fill="#003a80" glyphName="PLUS_CIRCLE" size="24" />
                      </graphic>
@@ -81,27 +83,27 @@
    
    <!-- Center section: Chat messages -->
    <center>
-      <ScrollPane fx:id="chatScrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-color: white;">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-color: white;">
          <content>
-            <VBox fx:id="chatVBox" spacing="10.0">
+            <VBox spacing="10.0">
                <children>
                   <!-- Chat message from current user -->
-                  <HBox fx:id="myChatHBox" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px;">
+                  <HBox fx:id="currentUserTextBubble" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px;">
                      <children>
-                        <ImageView fx:id="myMessageImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../../../../../../../../../Downloads/user%20(1).png" />
+                              <Image url="@../pictures/user_1.png" />
                            </image>
                         </ImageView>
-                        <VBox fx:id="myMessageVBox" spacing="5.0">
+                        <VBox spacing="5.0">
                            <children>
-                              <HBox fx:id="myMessageHeaderHBox" alignment="CENTER_LEFT" spacing="5.0">
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
                                  <children>
-                                    <Label fx:id="myNameLabel" style="-fx-font-weight: bold;" text="Me" />
-                                    <Label fx:id="myTimestampLabel" style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:00 PM" />
+                                    <Label fx:id="currentUserId" style="-fx-font-weight: bold;" text="Me" />
+                                    <Label fx:id="currentUserTimeStamp" style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:00 PM" />
                                  </children>
                               </HBox>
-                              <Label fx:id="myMessageLabel" text="Hello, how is the project going so far?" wrapText="true" VBox.vgrow="ALWAYS" />
+                              <Label text="Hello, how is the project going so far?" wrapText="true" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children>
@@ -110,22 +112,22 @@
                      </padding>
                   </HBox>
                   <!-- Chat message from other user -->
-                  <HBox fx:id="otherChatHBox" alignment="TOP_RIGHT" layoutX="15.0" layoutY="15.0" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px;">
+                  <HBox fx:id="otherUserTextBubble" alignment="TOP_RIGHT" layoutX="15.0" layoutY="15.0" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px;">
                      <children>
-                        <VBox fx:id="otherMessageVBox" alignment="TOP_RIGHT" spacing="5.0">
+                        <VBox alignment="TOP_RIGHT" spacing="5.0">
                            <children>
-                              <HBox fx:id="otherMessageHeaderHBox" alignment="CENTER_RIGHT" spacing="5.0">
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                  <children>
-                                    <Label fx:id="otherTimestampLabel" style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:19 PM" />
-                                    <Label fx:id="otherNameLabel" style="-fx-font-weight: bold;" text="Other user" />
+                                    <Label style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:19 PM" />
+                                    <Label fx:id="otherUserId" style="-fx-font-weight: bold;" text="Other user" />
                                  </children>
                               </HBox>
-                              <Label fx:id="otherMessageLabel" text="It is going perfectly, we are almost finished!" textAlignment="RIGHT" wrapText="true" VBox.vgrow="ALWAYS" />
+                              <Label text="It is going perfectly, we are almost finished!" textAlignment="RIGHT" wrapText="true" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
-                        <ImageView fx:id="otherMessageImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../../../../../../../../../Downloads/user%20(1).png" />
+                              <Image url="@../pictures/user_1.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -134,22 +136,22 @@
                      </padding>
                   </HBox>
                   <!-- Chat message with image -->
-                  <HBox fx:id="imageChatHBox" layoutX="15.0" layoutY="15.0" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px;">
+                  <HBox layoutX="15.0" layoutY="15.0" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px;">
                      <children>
-                        <ImageView fx:id="imageMessageImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../../../../../../../../../Downloads/user%20(1).png" />
+                              <Image url="@../pictures/user_1.png" />
                            </image>
                         </ImageView>
-                        <VBox fx:id="imageMessageVBox" spacing="5.0">
+                        <VBox spacing="5.0">
                            <children>
-                              <HBox fx:id="imageMessageHeaderHBox" alignment="CENTER_LEFT" spacing="5.0">
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
                                  <children>
-                                    <Label fx:id="imageMessageNameLabel" style="-fx-font-weight: bold;" text="Me" />
-                                    <Label fx:id="imageMessageTimestampLabel" style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:23 PM" />
+                                    <Label fx:id="currentUserId2" style="-fx-font-weight: bold;" text="Me" />
+                                    <Label fx:id="currentUserTimeStamp2" style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:23 PM" />
                                  </children>
                               </HBox>
-                              <ImageView fx:id="sentImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../pictures/pigeon.jpg" />
                                  </image>
@@ -175,7 +177,7 @@
    
    <!-- Bottom section: Message input area -->
    <bottom>
-      <VBox fx:id="bottomVBox" prefHeight="79.0" prefWidth="704.0" spacing="10.0" style="-fx-background-color: #e6e6e6;" BorderPane.alignment="CENTER">
+      <VBox prefHeight="79.0" prefWidth="704.0" spacing="10.0" style="-fx-background-color: #e6e6e6;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
@@ -183,22 +185,22 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
          <children>
-            <HBox fx:id="messageInputHBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <!-- Attach file button -->
-                  <Button fx:id="attachFileButton" onAction="#handleAttachFile" mnemonicParsing="false" style="-fx-background-radius: 100; -fx-background-color: #c5c5c5;">
+                  <Button fx:id="attachImage" mnemonicParsing="false" onAction="#handleAttachImage" style="-fx-background-radius: 100; -fx-background-color: #c5c5c5;">
                      <graphic>
                         <FontAwesomeIconView fill="#f7f7f7" glyphName="PAPERCLIP" size="24" />
                      </graphic>
                   </Button>
                   <!-- Message input field -->
-                  <TextField fx:id="messageTextField" promptText="Type in your message ..." HBox.hgrow="ALWAYS">
+                  <TextField fx:id="textMessageField" promptText="Type in your message ..." HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </TextField>
                   <!-- Send message button -->
-                  <Button fx:id="sendButton" onAction="#handleSendMessage" layoutX="617.0" layoutY="21.0" mnemonicParsing="false" style="-fx-background-radius: 8px; -fx-font-weight: bold;" text="SEND">
+                  <Button fx:id="SendBtn" layoutX="617.0" layoutY="21.0" mnemonicParsing="false" onAction="#handleSendMessage" style="-fx-background-radius: 8px; -fx-font-weight: bold;" text="SEND">
                      <graphic>
                         <FontAwesomeIconView fill="#003a80" glyphName="PAPER_PLANE" size="24" />
                      </graphic>
@@ -206,69 +208,8 @@
                </children>
             </HBox>
             <!-- Error message label -->
-            <Label fx:id="errorMessageLabel" style="-fx-text-fill: #ff5e5e;" text="Error messages should appear here!" textFill="#ff5e5e" />
+            <Label fx:id="errorLabel" style="-fx-text-fill: #ff5e5e;" text="Error messages should appear here!" textFill="#ff5e5e" />
          </children>
       </VBox>
    </bottom>
-   
-   <!-- Right section: Group members list -->
-   <right>
-      <VBox fx:id="rightVBox" BorderPane.alignment="CENTER">
-         <children>
-            <!-- Group members label -->
-            <Label style="-fx-font-weight: bold;" text="Group members" />
-            <!-- Scrollable list of group members -->
-            <ScrollPane fx:id="membersScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefWidth="200.0" style="-fx-border-color: white;" VBox.vgrow="ALWAYS">
-               <content>
-                  <VBox fx:id="membersVBox" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
-                     <children>
-                        <!-- Group member item -->
-                        <HBox fx:id="member1HBox" spacing="10.0" style="-fx-background-color: #92c1ff; -fx-background-radius: 8px;">
-                           <children>
-                              <ImageView fx:id="member1ImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../pictures/user_1.png" />
-                                 </image>
-                              </ImageView>
-                              <HBox fx:id="member1NameHBox" alignment="CENTER_LEFT" spacing="5.0">
-                                 <children>
-                                    <Label fx:id="member1NameLabel" style="-fx-font-weight: bold;" text="User 1" />
-                                 </children>
-                              </HBox>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <!-- Another group member item -->
-                        <HBox fx:id="member2HBox" layoutX="15.0" layoutY="15.0" spacing="10.0" style="-fx-background-color: #92c1ff; -fx-background-radius: 8px;">
-                           <children>
-                              <ImageView fx:id="member2ImageView" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../pictures/user_1.png" />
-                                 </image>
-                              </ImageView>
-                              <HBox fx:id="member2NameHBox" alignment="CENTER_LEFT" spacing="5.0">
-                                 <children>
-                                    <Label fx:id="member2NameLabel" style="-fx-font-weight: bold;" text="User 2" />
-                                 </children>
-                              </HBox>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </VBox>
-               </content>
-            </ScrollPane>
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </VBox>
-   </right>
 </BorderPane>

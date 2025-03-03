@@ -38,7 +38,7 @@ public class ChatHandler {
             while (rs.next()) {
                 String chatname = rs.getString("chatname");
                 String chatHost = rs.getString("chathost");
-                chatRooms.add(new ChatRoom(chatname, chatHost));
+                chatRooms.add(new ChatRoom(chatname, chatHost, new ArrayList<>()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,18 +46,28 @@ public class ChatHandler {
         return chatRooms;
     }
 
-    public boolean joinChat(String username, String chatname) {
-        String sql = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
+    public ChatRoom joinChat(String username, String chatname) {
+        String sql1 = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
         try (Connection conn = dataSource.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, username);
-            ps.setString(2, chatname);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            PreparedStatement ps1 = conn.prepareStatement(sql1);
+            ps1.setString(1, username);
+            ps1.setString(2, chatname);
+            int rowsAffected = ps1.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                String sql2 = "SELECT * FROM ChatRooms WHERE chatname = ?;";
+                PreparedStatement ps2 = conn.prepareStatement(sql2);
+                ps2.setString(1, chatname);
+
+                ResultSet rs = ps2.executeQuery();
+                if(rs.next()) {
+                    return new ChatRoom(rs.getString("chatname"), rs.getString("chathost"), new ArrayList<>());
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public ChatRoom connectChat(String username, String chatname) {
@@ -68,9 +78,9 @@ public class ChatHandler {
             ps.setString(2, chatname);
             ps.setString(3, username);
             ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return new ChatRoom(chatname, rs.getString("chathost"));
+            
+            if(rs.next()) {
+                return new ChatRoom(chatname, rs.getString("chathost"), new ArrayList<>());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -117,7 +127,7 @@ public class ChatHandler {
             ps.setString(1, chatName);
             ps.setTimestamp(2, timestamp);
             ResultSet rs = ps.executeQuery();
-
+    
             while (rs.next()) {
                 Message msg = new Message(
                         rs.getString("username"),
@@ -126,7 +136,7 @@ public class ChatHandler {
                         rs.getBytes("imagedata"),
                         rs.getTimestamp("timestamp"));
                 history.add(msg);
-            }
+            } 
         } catch (SQLException e) {
             e.printStackTrace();
         }
