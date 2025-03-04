@@ -12,13 +12,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.concurrent.ExecutionException;
 import shared.Container;
 
-public class SignInController {
+public class SignInController extends BaseController {
 
     @FXML
     private Label errorLabel;
@@ -38,19 +34,23 @@ public class SignInController {
     @FXML
     private TextField usernameField;
 
-    private ClientSender clientSender;
-    private ClientReceiver clientReceiver;
+    public SignInController(){
+        //Empty constructor
+    }
 
-    private String buildParamString(Map<String, String> params) {
-        StringJoiner joiner = new StringJoiner("&");
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            joiner.add(entry.getKey() + "=" + entry.getValue());
-        }
-        return joiner.toString();
+    // Setter methods to initialize dependencies
+    public void setClientSender(ClientSender clientSender) {
+        this.clientSender = clientSender;
+    }
+
+    public void setClientReceiver(ClientReceiver clientReceiver) {
+        this.clientReceiver = clientReceiver;
     }
 
     @FXML
-    private void handleSignIn(ActionEvent event) {
+    public void handleSignIn(ActionEvent event) {
+        errorLabel.setText(""); // Clear error message on each attempt
+
         String username = usernameField.getText();
         String password = passwordField.getText();
 
@@ -61,34 +61,26 @@ public class SignInController {
 
         try {
             clientSender.signin(username, password);
-    }
-    
-    @FXML
-    private void handleRegisterNow(ActionEvent event) {
-        //TODO: Implement handle register now
-    }
-    @FXML
-    private void handleSettings(ActionEvent event) {
-    
-    }
-    
-   
-    private void switchToMainView (String username) {
-        // Load the main view FXML
-        Stage stage = (Stage) usernameField.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mainView.fxml"));
-        Parent root = loader.load();
-        // TODO: Inject the client model into the MainController
-    }
-
-
-    private public void switchToSignUp(ActionEvent event) {
-
+            switchScene("fxml/mainView.fxml", event);
+        } catch (Exception e) {
+            errorLabel.setText("Sign in failed!");
+        }
     }
 
     @FXML
-    private void switchToSettings(){
-        //TODO: Implement switch to sign-up view
+    public void handleRegisterNow(ActionEvent event) {
+        String sceneName = "fxml/signupView.fxml";
+        if (sceneName != null && !sceneName.isEmpty()) {
+            switchScene(sceneName, event);
+        } else {
+            errorLabel.setText("Scene name is invalid!");
+        }
     }
+
+    @FXML
+    public void handleSettings(ActionEvent event) {
+        switchScene("/fxml/settingsView.fxml", event);
+    }
+
+
 }
-

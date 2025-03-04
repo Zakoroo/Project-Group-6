@@ -1,6 +1,5 @@
 package client.controllers;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +15,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
 
-public class SignUpController {
+public class SignUpController extends BaseController {
 
     @FXML
     private Hyperlink alreadyRegistered;
@@ -45,14 +44,20 @@ public class SignUpController {
     @FXML
     private TextField usernameField;
 
+   public SignUpController (ClientSender clientSender) {
+        this.clientSender = clientSender;
+   }
+    public SignUpController() {
+        //Empty constructor
+    }
+
     @FXML
     void handleAlreadyRegistered(ActionEvent event) {
+        switchScene("/fxml/signinView.fxml", event);
     }
 
     @FXML
     void handleSettings(ActionEvent event) {
-
-
     }
 
     @FXML
@@ -72,20 +77,11 @@ public class SignUpController {
             errorLabel.setText("Passwords do not match!");
             return;
         }
-
+        
+        switchScene("fxml/signinView.fxml", event);
     }
 
-    
-    void switchToSignIn() throws IOException {
-        Stage stage = (Stage) nicknameField.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/signinView.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-    
-    void switchToSignInSuccess(String username) throws IOException {
+    /*void switchToSignInSuccess(String username) throws IOException {
         Stage stage = (Stage) nicknameField.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/signinView.fxml"));
         Parent root = loader.load();
@@ -93,5 +89,5 @@ public class SignUpController {
         errorLabel.setText("Sign up successful as user: " + username + "!");
         stage.setScene(scene);
         stage.show();
-    }
+    }*/
 }

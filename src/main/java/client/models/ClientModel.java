@@ -1,5 +1,6 @@
 package client.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.FXCollections;
@@ -11,7 +12,11 @@ public class ClientModel {
     private String username;
     private List<ChatRoom> joinedChatRooms;
     private ChatRoom connectedChatRoom;
-    
+
+    public ClientModel() {
+        this.joinedChatRooms = new ArrayList<>();
+    }
+
     public String getUsername() {
         return username;
     }
@@ -41,8 +46,8 @@ public class ClientModel {
     }
 
     public void setConnectedChatRoom(String chatname) {
-        for(ChatRoom chatroom: joinedChatRooms) {
-            if(chatroom.name().equals(chatname)) {
+        for (ChatRoom chatroom : joinedChatRooms) {
+            if (chatroom.name().equals(chatname)) {
                 this.connectedChatRoom = chatroom;
             }
         }

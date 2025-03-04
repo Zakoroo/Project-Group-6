@@ -13,12 +13,15 @@ import client.models.*;
 public class ClientReceiver implements Runnable {
     private ObjectInputStream ois;
     private ClientModel model;
-    private SignInController signinController;
-    private SignUpController signupController;
-        
+    private BaseController currentController;
 
-    public ClientReceiver(ObjectInputStream ois) {
+    public void setCurrentController(BaseController currentController) {
+        this.currentController = currentController;
+    }
+
+    public ClientReceiver(ObjectInputStream ois, BaseController currentController) {
         this.ois = ois;
+        this.currentController = currentController;
     }
 
     @Override
@@ -45,26 +48,37 @@ public class ClientReceiver implements Runnable {
         switch (command) {
             case "signin-success":
                 handleSignin(data);
+                break;
             case "signup-success":
                 handleSignup(data);
+                break;
             case "delete-user-success":
                 handleDeleteUser(data);
+                break;
             case "create-chat-success":
                 handleCreateChat(data);
+                break;
             case "join-chat-success":
                 handleJoinChat(data);
+                break;
             case "connect-chat-success":
                 handleConnectChat(data);
+                break;
             case "find-chat-success":
                 handleFindChat(data);
+                break;
             case "quit-chat-success":
                 handleQuitChat(data);
+                break;
             case "send-message-success":
                 handleSendMessage(data);
+                break;
             case "send-message":
                 handleReceiveMessage(data);
+                break;
             case "get-history-success":
                 handleGetHistory(data);
+                break;
             default:
                 System.out.println("Received unknown command: " + command);
         }
@@ -101,7 +115,7 @@ public class ClientReceiver implements Runnable {
         if (data instanceof Message) {
             Message message = (Message) data;
             model.addMessage(message);
-            
+
             // TODO: render the changes in the main view
         }
 
@@ -112,8 +126,8 @@ public class ClientReceiver implements Runnable {
     private void handleQuitChat(Object data) {
         if (data instanceof String) {
             String chatname = (String) data;
-            model.removeChatRoom(chatname); 
-            
+            model.removeChatRoom(chatname);
+
             // TODO: render the changes in the main view
         }
     }
@@ -171,7 +185,8 @@ public class ClientReceiver implements Runnable {
         }
     }
 
-    // upon success switch to the signin view with indicating that the account was successfully created
+    // upon success switch to the signin view with indicating that the account was
+    // successfully created
     private void handleSignup(Object data) {
         if (data instanceof String) {
             String string = (String) data;
@@ -179,7 +194,7 @@ public class ClientReceiver implements Runnable {
 
             // TODO: switch to sign in with
             try {
-                signupController.switchToSignIn();
+                currentController.switchScene("fxml/signinView.fxml", null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -194,7 +209,7 @@ public class ClientReceiver implements Runnable {
 
             // TODO: switch to the main view
             try {
-                signinController.switchToMainView(username);
+                currentController.switchScene("fxml/mainView.fxml", null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

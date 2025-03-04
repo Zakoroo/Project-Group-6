@@ -32,7 +32,7 @@
             </PasswordField>
             <HBox alignment="CENTER" prefHeight="43.0" prefWidth="345.0" spacing="48.0">
                <children>
-                  <Hyperlink fx:id="registerNow" prefHeight="24.0" text="Register now" />
+                  <Hyperlink fx:id="registerNow" onAction="#handleRegisterNow" prefHeight="24.0" text="Register now" />
                   <Button fx:id="signInBtn" defaultButton="true" mnemonicParsing="false" onAction="#handleSignIn" prefHeight="30.0" prefWidth="91.0" style="-fx-background-color: #007bff;" text="SIGN IN" textFill="WHITE" />
                </children>
                <padding>

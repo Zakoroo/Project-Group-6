@@ -4,39 +4,56 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import client.controllers.SignInController;
 
 import java.io.IOException;
+import client.controllers.*;
+import client.models.ClientModel;
 
 public class ClientDriver extends Application {
-    private ClientConnection clientConnection;
+    private static ClientConnection connection;
+    private static ClientSender clientSender;
+    private static ClientReceiver clientReceiver;
+    private static ClientModel clientModel;
 
     @Override
     public void start(Stage primaryStage) {
         try {
-            // Connect to the server
-            clientConnection = new ClientConnection("127.0.0.1", 8005);
-
             // Load the sign-in view FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/signInView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/signinView.fxml"));
             Scene scene = new Scene(loader.load());
 
-            // Inject client connection into the SignInController
+            // Initialize the controller and inject dependencies
             SignInController controller = loader.getController();
-            controller.setClientConnection(clientConnection);
+            controller.setClientSender(clientSender);
+            controller.setClientReceiver(clientReceiver);
+            controller.setClientModel(clientModel);
 
-            // (Optional) load stylesheet
-            scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
+            // Set the controller in ClientReceiver
+            clientReceiver.setCurrentController(controller);
 
             primaryStage.setTitle("Chat Application");
             primaryStage.setScene(scene);
             primaryStage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Failed to start client: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
+
+        // connect to the server
+        connection = ClientConnection.getInstance();
+        try {
+            connection.connect("localhost", 8005);
+            clientSender = new ClientSender(connection.getOutputStream());
+            clientReceiver = new ClientReceiver(connection.getInputStream(), null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // launch the GUI
         launch(args);
     }
 }

@@ -54,7 +54,7 @@
             </HBox>
             <HBox style="-fx-padding: 10;">
                <children>
-                  <Label text="Error message placeholder" textFill="#ff2a2a" />
+                  <Label fx:id="errorLabel" text="Error message placeholder" textFill="#ff2a2a" />
                </children>
             </HBox>
          </children>

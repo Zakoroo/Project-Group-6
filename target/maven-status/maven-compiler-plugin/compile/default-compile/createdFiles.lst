@@ -1,7 +1,9 @@
 server/AccountHandler.class
+client/models/ClientModel.class
+client/controllers/SearchController.class
+client/controllers/BaseController.class
 shared/Message.class
-client/RequestHandler.class
-client/controllers/ChatController.class
+client/controllers/ClientReceiver.class
 client/controllers/SignInController.class
 server/ChatServer.class
 server/ChatHandler.class
@@ -9,8 +11,9 @@ shared/ChatRoom.class
 client/ClientConnection.class
 server/NotificationHandler.class
 client/ClientDriver.class
-client/models/ChatModel.class
+client/controllers/MainController.class
 server/ClientHandler.class
 shared/Container.class
+client/controllers/ClientSender.class
 server/ServerDriver.class
 client/controllers/SignUpController.class
