@@ -34,6 +34,8 @@ public class SignInController extends BaseController {
     @FXML
     private TextField usernameField;
 
+    private ClientSender clientSender;
+
     public SignInController(){
         //Empty constructor
     }
@@ -43,13 +45,15 @@ public class SignInController extends BaseController {
         this.clientSender = clientSender;
     }
 
-    public void setClientReceiver(ClientReceiver clientReceiver) {
-        this.clientReceiver = clientReceiver;
-    }
-
     @FXML
     public void handleSignIn(ActionEvent event) {
         errorLabel.setText(""); // Clear error message on each attempt
+
+        if (clientSender == null) {
+            System.err.println("Error: ClientSender is not initialized!");
+            errorLabel.setText("Internal error: ClientSender not set");
+            return;
+        }
 
         String username = usernameField.getText();
         String password = passwordField.getText();
@@ -61,7 +65,7 @@ public class SignInController extends BaseController {
 
         try {
             clientSender.signin(username, password);
-            switchScene("fxml/mainView.fxml", event);
+            switchScene("/fxml/mainView.fxml", event, clientSender);
         } catch (Exception e) {
             errorLabel.setText("Sign in failed!");
         }
@@ -69,18 +73,11 @@ public class SignInController extends BaseController {
 
     @FXML
     public void handleRegisterNow(ActionEvent event) {
-        String sceneName = "fxml/signupView.fxml";
-        if (sceneName != null && !sceneName.isEmpty()) {
-            switchScene(sceneName, event);
-        } else {
-            errorLabel.setText("Scene name is invalid!");
-        }
+        switchScene("/fxml/signupView.fxml", event, clientSender);
     }
 
     @FXML
     public void handleSettings(ActionEvent event) {
-        switchScene("/fxml/settingsView.fxml", event);
+        switchScene("/fxml/settingsView.fxml", event, clientSender);
     }
-
-
 }

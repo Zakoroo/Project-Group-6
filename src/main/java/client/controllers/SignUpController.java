@@ -7,13 +7,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import shared.Container;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.concurrent.ExecutionException;
 
 public class SignUpController extends BaseController {
 
@@ -44,30 +37,41 @@ public class SignUpController extends BaseController {
     @FXML
     private TextField usernameField;
 
-   public SignUpController (ClientSender clientSender) {
+    private ClientSender clientSender;
+
+    // Setter for ClientSender injection
+    public void setClientSender(ClientSender clientSender) {
         this.clientSender = clientSender;
-   }
-    public SignUpController() {
-        //Empty constructor
+        System.out.println("ClientSender has been set in SignUpController!"); // Debug message
     }
 
     @FXML
     void handleAlreadyRegistered(ActionEvent event) {
-        switchScene("/fxml/signinView.fxml", event);
+        switchScene("/fxml/signinView.fxml", event, clientSender);
     }
 
     @FXML
     void handleSettings(ActionEvent event) {
+        // Implementation for settings (currently empty)
     }
 
     @FXML
     void handleSignUp(ActionEvent event) {
+        System.out.println("Sign up button clicked");
+        
+        if (clientSender == null) {
+            System.err.println("Error: ClientSender is not initialized!");
+            errorLabel.setText("Internal error: ClientSender not set");
+            return;
+        }
+        
         String nickname = nicknameField.getText();
         String username = usernameField.getText();
         String email = emailField.getText();
         String password = enterPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
 
+        // Validate fields
         if (nickname.isEmpty() || username.isEmpty() || email.isEmpty()
                 || password.isEmpty() || confirmPassword.isEmpty()) {
             errorLabel.setText("All fields are required!");
@@ -77,17 +81,17 @@ public class SignUpController extends BaseController {
             errorLabel.setText("Passwords do not match!");
             return;
         }
-        
-        switchScene("fxml/signinView.fxml", event);
-    }
 
-    /*void switchToSignInSuccess(String username) throws IOException {
-        Stage stage = (Stage) nicknameField.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/signinView.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        errorLabel.setText("Sign up successful as user: " + username + "!");
-        stage.setScene(scene);
-        stage.show();
-    }*/
+        // Call the signup method via the clientSender instance
+        try {
+            clientSender.signup(nickname, username, email, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorLabel.setText("Sign-up failed: " + e.getMessage());
+            return;
+        }
+
+        // Navigate to the sign-in view upon successful sign-up
+        switchScene("/fxml/signinView.fxml", event, clientSender);
+    }
 }

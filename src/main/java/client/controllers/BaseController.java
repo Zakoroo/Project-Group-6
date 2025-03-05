@@ -29,6 +29,10 @@ public abstract class BaseController {
     }
 
     protected void switchScene(String name, Object source) {
+        switchScene(name, source, null); // Call the other method with null as ClientSender
+    }
+    
+    protected void switchScene(String name, Object source, ClientSender clientSender) {
         Stage stage = null;
         if (source instanceof ActionEvent) {
             stage = (Stage)((Node)((ActionEvent) source).getSource()).getScene().getWindow();
@@ -41,6 +45,15 @@ public abstract class BaseController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(name.startsWith("/") ? name : "/" + name));
             Parent root = loader.load();
+    
+            // Pass the ClientSender if applicable
+            Object controller = loader.getController();
+            if (clientSender != null && controller instanceof SignUpController) {
+                ((SignUpController) controller).setClientSender(clientSender);
+            } else if (clientSender != null && controller instanceof SignInController) {
+                ((SignInController) controller).setClientSender(clientSender);
+            }
+    
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
@@ -48,5 +61,7 @@ public abstract class BaseController {
             e.printStackTrace();
         }
     }
+    
+    
 }
 
