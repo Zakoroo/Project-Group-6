@@ -75,6 +75,11 @@ public class MainController extends BaseController {
 
         chatListView.getSelectionModel().selectedItemProperty().addListener((observable, oldChat, newChat) -> {
             if (newChat != null) {
+                try {
+                    clientSender.connectChat(newChat.name());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 clientModel.setConnectedChatRoom(newChat.name());
                 System.out.println("Connected chat updated: " + newChat.name());
             }
@@ -160,7 +165,6 @@ public class MainController extends BaseController {
                 System.out.println("this is what is gonna be sent"+textMessage);
                 clientSender.sendMessage(textMessage);
                 textMessageField.clear();
-                clientSender.sendMessage(textMessage);
             } catch (Exception e) {
                 errorLabel.setText("Failed to send message.");
                 e.printStackTrace();
