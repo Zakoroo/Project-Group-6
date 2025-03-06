@@ -96,6 +96,7 @@ public class MainController extends BaseController {
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (Message message : change.getAddedSubList()) {
+                        System.out.println("Debug message :(");
                         HBox chatBubble = null;
 
                         if (message.type().equals("image")) {
@@ -246,6 +247,6 @@ public class MainController extends BaseController {
     void handleSignOut(ActionEvent event) {
         chatContainer.getChildren().clear();
         clientModel.clearModel();
-        sceneManager.switchScene("/fxml/signinView");
+        sceneManager.switchScene("/fxml/signinView.fxml");
     }
 }

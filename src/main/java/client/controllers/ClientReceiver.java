@@ -132,6 +132,7 @@ public class ClientReceiver implements Runnable {
         if (data instanceof List) {
             List<Message> history = (List) data;
             clientModel.setHistory(FXCollections.observableArrayList(history));
+            history.forEach(message -> System.out.println(message));
         }
     }
 

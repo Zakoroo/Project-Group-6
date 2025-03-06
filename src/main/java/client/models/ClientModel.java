@@ -72,16 +72,12 @@ public class ClientModel {
     }
 
     public ObservableList<Message> getHistory() {
-        if (connectedChatRoom != null) {
-            return history;
-        } else {
-            return FXCollections.observableArrayList();
-        }
+        return history;
     }
 
     public void setHistory(List<Message> history) {
         if (connectedChatRoom != null) {
-            this.history.addAll(history);
+            this.history.setAll(history);
         }
     }
 

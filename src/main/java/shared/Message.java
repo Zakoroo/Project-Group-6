@@ -21,4 +21,13 @@ implements Serializable {
     public Message(String username, byte[] image, Timestamp timestamp) {
         this(username, "image", null, image, timestamp);
     }
+
+    @Override
+    public final String toString() {
+        if(type.equals("text")) {
+            return username + ": [" + type + "]: " + text;
+        } else {
+            return username + ": [" + type + "]: (image data)"; 
+        }
+    }
 }
