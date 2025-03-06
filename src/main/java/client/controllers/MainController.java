@@ -1,6 +1,8 @@
 package client.controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.file.Files;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -8,6 +10,7 @@ import java.util.List;
 
 import client.models.ClientModel;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,14 +29,18 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import shared.ChatRoom;
+import shared.Message;
 
 public class MainController extends BaseController {
-    
     private final static long SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB
+    private final static String IMAGE_BUBBLE = "/fxml/imageChatBox.fxml";
+    private final static String OTHER_IMAGE_BUBBLE = "/fxml/otherUserImageChatBox.fxml";
+    private final static String TEXT_BUBBLE = "/fxml/chatBox.fxml";
+    private final static String OTHER_TEXT_BUBBLE = "/fxml/otherUserChatBox.fxml";
 
     @FXML
     private Label currentUserLabel;
-    
+
     @FXML
     private Button SendBtn;
 
@@ -59,8 +66,7 @@ public class MainController extends BaseController {
     private Label errorLabel;
 
     @FXML
-    void initialize() {
-        
+    public void initialize() {
     }
 
     @Override
@@ -77,11 +83,41 @@ public class MainController extends BaseController {
             if (newChat != null) {
                 try {
                     clientSender.connectChat(newChat.name());
+                    clientSender.getHistory();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 clientModel.setConnectedChatRoom(newChat.name());
                 System.out.println("Connected chat updated: " + newChat.name());
+            }
+        });
+
+        clientModel.getHistory().addListener((ListChangeListener<Message>) change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    for (Message message : change.getAddedSubList()) {
+                        HBox chatBubble = null;
+
+                        if (message.type().equals("image")) {
+                            if (message.username().equals(clientModel.getUsername())) {
+                                chatBubble = createBubble(IMAGE_BUBBLE, message.image(), "Me");
+                            } else {
+                                chatBubble = createBubble(OTHER_IMAGE_BUBBLE, message.image(), message.username());
+                            }
+                        } else {
+                            if (message.username().equals(clientModel.getUsername())) {
+                                chatBubble = createBubble(TEXT_BUBBLE, message.text(), "Me");
+                            } else {
+                                chatBubble = createBubble(OTHER_TEXT_BUBBLE, message.text(),
+                                        message.username());
+                            }
+                        }
+
+                        if (chatBubble != null) {
+                            chatContainer.getChildren().add(chatBubble);
+                        }
+                    }
+                }
             }
         });
     }
@@ -122,8 +158,9 @@ public class MainController extends BaseController {
         String extension = getFileExtension(file);
         if (isValidImageFile(extension)) {
             try {
-                Image image = new Image(file.toURI().toString());
-                handleSendImage(image);
+                byte[] imageBytes = Files.readAllBytes(file.toPath());
+                clientSender.sendMessage(imageBytes);
+            
             } catch (Exception e) {
                 errorLabel.setText("Failed to load image.");
                 e.printStackTrace();
@@ -147,22 +184,7 @@ public class MainController extends BaseController {
     public void handleSendMessage(ActionEvent event) {
         if (!textMessageField.getText().isEmpty()) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/chatBox.fxml"));
-                HBox chatBox = loader.load();
-
-                Label messageLabel = (Label) chatBox.lookup("#messageLabel");
-                Label userNameLabel = (Label) chatBox.lookup("#userNameLabel");
-                Label timeStampLabel = (Label) chatBox.lookup("#timeStampLabel");
-                ImageView profileImage = (ImageView) chatBox.lookup("#profileImage");
-
-                messageLabel.setText(textMessageField.getText());
-                userNameLabel.setText("Me");
-                timeStampLabel.setText(LocalTime.now().toString());
-                profileImage.setImage(new Image(getClass().getResource("/pictures/user_1.png").toExternalForm()));
-
-                chatContainer.getChildren().add(chatBox);
                 String textMessage = textMessageField.getText();
-                System.out.println("this is what is gonna be sent"+textMessage);
                 clientSender.sendMessage(textMessage);
                 textMessageField.clear();
             } catch (Exception e) {
@@ -171,10 +193,10 @@ public class MainController extends BaseController {
             }
         }
     }
-    @FXML
-    public void handleReceiveMessage(String sender, String message) {
+
+    public HBox createBubble(String fxmlPath, String message, String sender) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/otherUserChatBox.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             HBox chatBox = loader.load();
 
             Label messageLabel = (Label) chatBox.lookup("#messageLabel");
@@ -187,60 +209,43 @@ public class MainController extends BaseController {
             timeStampLabel.setText(LocalTime.now().toString());
             profileImage.setImage(new Image(getClass().getResource("/pictures/user_1.png").toExternalForm()));
 
-            chatContainer.getChildren().add(chatBox);
+            return chatBox;
         } catch (Exception e) {
-            errorLabel.setText("Failed to receive message.");
             e.printStackTrace();
         }
+        return null;
     }
 
-    public void handleSendImage(Image image) {
+    public HBox createBubble(String fxmlPath, byte[] byteimage, String sender) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageChatBox.fxml"));
+            ByteArrayInputStream bis = new ByteArrayInputStream(byteimage);
+            Image messageImage = new Image(bis);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             HBox chatBox = loader.load();
 
             Label userNameLabel = (Label) chatBox.lookup("#userNameLabel");
             Label timeStampLabel = (Label) chatBox.lookup("#timeStampLabel");
             ImageView profileImage = (ImageView) chatBox.lookup("#profileImage");
-            ImageView messageImage = (ImageView) chatBox.lookup("#messageImage");
+            ImageView imageView = (ImageView) chatBox.lookup("#messageImage");
 
-            userNameLabel.setText("Me");
+            userNameLabel.setText(sender);
             timeStampLabel.setText(LocalTime.now().toString());
             profileImage.setImage(new Image(getClass().getResource("/pictures/user_1.png").toExternalForm()));
-            messageImage.setImage(image);
+            imageView.setImage(messageImage);
 
-            chatContainer.getChildren().add(chatBox);
-            clientSender.sendMessage(image);
+            return chatBox;
         } catch (Exception e) {
-            errorLabel.setText("Failed to send image.");
             e.printStackTrace();
         }
-    }
 
-    public void handleReceiveImage(Image image) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/otherUserImageChatBox.fxml"));
-            HBox chatBox = loader.load();
-
-            Label userNameLabel = (Label) chatBox.lookup("#userNameLabel");
-            Label timeStampLabel = (Label) chatBox.lookup("#timeStampLabel");
-            ImageView profileImage = (ImageView) chatBox.lookup("#profileImage");
-            ImageView messageImage = (ImageView) chatBox.lookup("#messageImage");
-
-            userNameLabel.setText("Other User");
-            timeStampLabel.setText(LocalTime.now().toString());
-            profileImage.setImage(new Image(getClass().getResource("/pictures/user_1.png").toExternalForm()));
-            messageImage.setImage(image);
-
-            chatContainer.getChildren().add(chatBox);
-        } catch (Exception e) {
-            errorLabel.setText("Failed to receive image.");
-            e.printStackTrace();
-        }
+        return null;
     }
 
     @FXML
     void handleSignOut(ActionEvent event) {
         chatContainer.getChildren().clear();
+        clientModel.clearModel();
+        sceneManager.switchScene("/fxml/signinView");
     }
 }

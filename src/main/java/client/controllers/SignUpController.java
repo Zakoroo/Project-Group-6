@@ -36,9 +36,22 @@ public class SignUpController extends BaseController {
 
     private ClientSender clientSender;
 
-    // Setter for ClientSender injection
-    public void setClientSender(ClientSender clientSender) {
-        this.clientSender = clientSender;
+    @Override
+    public void initialize() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void render() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDependencies() {
+        // TODO Auto-generated method stub
+        
     }
 
     @FXML

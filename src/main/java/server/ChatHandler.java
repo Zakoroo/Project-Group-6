@@ -21,7 +21,7 @@ public class ChatHandler {
             ps.setString(2, chatHost);
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
-                return new ChatRoom(chatName, chatHost, new ArrayList<Message>()); 
+                return new ChatRoom(chatName, chatHost); 
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,7 +40,7 @@ public class ChatHandler {
             while (rs.next()) {
                 String chatname = rs.getString("chatname");
                 String chatHost = rs.getString("chathost");
-                chatRooms.add(new ChatRoom(chatname, chatHost, new ArrayList<>()));
+                chatRooms.add(new ChatRoom(chatname, chatHost));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,7 +63,7 @@ public class ChatHandler {
 
                 ResultSet rs = ps2.executeQuery();
                 if(rs.next()) {
-                    return new ChatRoom(rs.getString("chatname"), rs.getString("chathost"), new ArrayList<>());
+                    return new ChatRoom(rs.getString("chatname"), rs.getString("chathost"));
                 }
             }
         } catch (SQLException e) {
@@ -82,7 +82,7 @@ public class ChatHandler {
             ResultSet rs = ps.executeQuery();
             
             if(rs.next()) {
-                return new ChatRoom(chatname, rs.getString("chathost"), new ArrayList<>());
+                return new ChatRoom(chatname, rs.getString("chathost"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,7 +115,7 @@ public class ChatHandler {
             while (rs.next()) {
                 String chatname = rs.getString("chatname");
                 String chatHost = rs.getString("chathost");
-                chatRooms.add(new ChatRoom(chatname, chatHost, new ArrayList<>()));
+                chatRooms.add(new ChatRoom(chatname, chatHost));
             }
         } catch (SQLException e) {
             e.printStackTrace();

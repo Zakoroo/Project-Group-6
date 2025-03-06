@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import client.controllers.*;
 import client.models.ClientModel;
+import client.models.SearchModel;
 
 public class ClientDriver extends Application {
 
@@ -19,6 +20,7 @@ public class ClientDriver extends Application {
             // set fields for receiver
             ClientReceiver.getInstance().setSceneManager(SceneManager.getInstance());
             ClientReceiver.getInstance().setClientModel(ClientModel.getInstance());
+            ClientReceiver.getInstance().setSearchModel(SearchModel.getInstance());
 
             // start the receiver
             new Thread(ClientReceiver.getInstance()).start();

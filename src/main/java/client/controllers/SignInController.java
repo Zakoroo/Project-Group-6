@@ -30,6 +30,26 @@ public class SignInController extends BaseController {
 
     private ClientSender clientSender;
 
+    
+
+    @FXML
+    public void initialize() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void render() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDependencies() {
+        // TODO Auto-generated method stub
+        
+    }
+
     public SignInController(){
         //Empty constructor
     }

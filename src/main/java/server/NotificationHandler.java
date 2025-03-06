@@ -101,7 +101,7 @@ public class NotificationHandler implements Runnable {
                     Container container = new Container("send-message", msg);
                     chatListeners.get(chatname).forEach(os -> {
                         try {
-                            os.writeObject(msg);
+                            os.writeObject(container);
                             os.flush();
                         } catch (IOException e) {
                             // remove listener if diconnected

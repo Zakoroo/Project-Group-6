@@ -14,12 +14,13 @@ import shared.ChatRoom;
 import shared.Container;
 import shared.Message;
 import client.SceneManager;
-import client.models.*;;
+import client.models.*;
 
 public class ClientReceiver implements Runnable {
     private static ClientReceiver instance;
     private ObjectInputStream ois;
     private ClientModel clientModel;
+    private SearchModel searchModel;
     private SceneManager sceneManager;
 
     public static void initialize(ObjectInputStream ois) {
@@ -47,6 +48,10 @@ public class ClientReceiver implements Runnable {
 
     public void setClientModel(ClientModel clientModel) {
         this.clientModel = clientModel;
+    }
+
+    public void setSearchModel(SearchModel searchModel) {
+        this.searchModel = searchModel;
     }
 
     @Override
@@ -125,14 +130,8 @@ public class ClientReceiver implements Runnable {
     // update the main view
     private void handleGetHistory(Object data) {
         if (data instanceof List) {
-            List<Message> history = (List<Message>) data;
-            if (clientModel.getHistory() == null) {
-                clientModel.setHistory(history);
-            } else {
-                history.forEach(m -> clientModel.addMessage(m));
-            }
-
-            // TODO: update the main view here
+            List<Message> history = (List) data;
+            clientModel.setHistory(FXCollections.observableArrayList(history));
         }
     }
 
@@ -151,11 +150,13 @@ public class ClientReceiver implements Runnable {
     private void handleReceiveMessage(Object data) {
         if (data instanceof Message) {
             Message message = (Message) data;
-            clientModel.addMessage(message);
-
-            // TODO: render the changes in the main view
+            
+            try {
+                clientModel.addMessage(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     // updates the list of joined chats
@@ -172,10 +173,13 @@ public class ClientReceiver implements Runnable {
     // update the search for chatrooms view
     private void handleFindChat(Object data) {
         if (data instanceof List) {
-            ArrayList<ChatRoom> searchResult = (ArrayList<ChatRoom>) data;
+            List<ChatRoom> searchResult = (List) data;
 
-            // TODO: update the search view with the searchResult
-            
+            try {
+                searchModel.setResultSet(FXCollections.observableArrayList(searchResult));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -184,9 +188,12 @@ public class ClientReceiver implements Runnable {
     private void handleConnectChat(Object data) {
         if (data instanceof String) {
             String chatname = (String) data;
-            clientModel.setConnectedChatRoom(chatname);
 
-            // TODO: update the main view
+            try {
+                clientModel.setConnectedChatRoom(chatname);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -205,7 +212,12 @@ public class ClientReceiver implements Runnable {
     private void handGetJoinedChats(Object data) {
         if (data instanceof List) {
             List<ChatRoom> chatRooms = (List) data;
-            clientModel.setJoinedChatRooms(FXCollections.observableArrayList(chatRooms));
+
+            try {
+                clientModel.setJoinedChatRooms(FXCollections.observableArrayList(chatRooms));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -213,9 +225,12 @@ public class ClientReceiver implements Runnable {
     private void handleCreateChat(Object data) {
         if (data instanceof String) {
             ChatRoom chatRoom = (ChatRoom) data;
-            clientModel.addChatRoom(chatRoom);
 
-            // TODO: close the prompt and send a connect request
+            try {
+                clientModel.addChatRoom(chatRoom);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -238,7 +253,6 @@ public class ClientReceiver implements Runnable {
             String string = (String) data;
             System.out.println(string);
 
-            // TODO: switch to sign in with
             try {
                 sceneManager.switchScene("/fxml/signinView.fxml");
             } catch (Exception e) {
@@ -255,9 +269,6 @@ public class ClientReceiver implements Runnable {
 
             try {
                 clientModel.setUsername(username);
-                // username
-                // joinded chatrooms
-
                 sceneManager.switchScene("/fxml/mainView.fxml");
             } catch (Exception e) {
                 e.printStackTrace();

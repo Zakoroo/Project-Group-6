@@ -5,9 +5,7 @@ import java.util.List;
 
 public record ChatRoom (
     String name, 
-    String host, 
-    List<Message> history
-    
+    String host
 ) implements Serializable {
     private static final long serialVersionUID = 42L;
 

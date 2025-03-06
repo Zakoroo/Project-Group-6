@@ -2,12 +2,14 @@ package client.controllers;
 
 import client.SceneManager;
 import client.models.ClientModel;
+import client.models.SearchModel;
 
 
-public class BaseController {
+public abstract class BaseController {
     protected SceneManager sceneManager;
     protected ClientSender clientSender;
     protected ClientModel clientModel;
+    protected SearchModel searchModel;
 
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -21,7 +23,13 @@ public class BaseController {
         this.clientModel = clientModel;
     }
 
-    public void setDependencies(){}
+    public void setSearchModel(SearchModel searchModel) {
+        this.searchModel = searchModel;
+    }
 
-    public void render() {}
+    public abstract void initialize();
+
+    public abstract void setDependencies();
+
+    public abstract void render();
 }

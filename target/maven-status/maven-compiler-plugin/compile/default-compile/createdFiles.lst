@@ -4,7 +4,6 @@ client\controllers\BaseController.class
 client\controllers\SearchController.class
 client\controllers\ClientReceiver.class
 server\ServerDriver.class
-shared\Profile.class
 client\controllers\SignUpController.class
 client\models\SearchModel.class
 server\ChatServer.class

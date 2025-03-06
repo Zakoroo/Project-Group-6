@@ -1,24 +1,20 @@
 package client.models;
 
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.List;
 import javafx.beans.property.StringProperty;
 import shared.ChatRoom;
 import shared.Message;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import shared.ChatRoom;
-import shared.Message;
-import java.util.List;
 
 public class ClientModel {
     private static ClientModel instance;
     private StringProperty username = new SimpleStringProperty("");
-    private ObservableList<ChatRoom> joinedChatRooms;
+    private ObservableList<ChatRoom> joinedChatRooms = FXCollections.observableArrayList();
+    private ObservableList<Message> history = FXCollections.observableArrayList();
     private ChatRoom connectedChatRoom;
-
 
     public static ClientModel getInstance() {
         if (instance == null) {
@@ -77,7 +73,7 @@ public class ClientModel {
 
     public ObservableList<Message> getHistory() {
         if (connectedChatRoom != null) {
-            return FXCollections.observableArrayList(connectedChatRoom.history());
+            return history;
         } else {
             return FXCollections.observableArrayList();
         }
@@ -85,13 +81,13 @@ public class ClientModel {
 
     public void setHistory(List<Message> history) {
         if (connectedChatRoom != null) {
-            connectedChatRoom.history().addAll(history);
+            this.history.addAll(history);
         }
     }
 
     public void addMessage(Message message) {
         if (connectedChatRoom != null) {
-            connectedChatRoom.history().add(message);
+            this.history.add(message);
         }
     }
 

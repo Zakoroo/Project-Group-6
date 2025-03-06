@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import client.controllers.BaseController;
 import client.models.ClientModel;
+import client.models.SearchModel;
 import client.controllers.ClientSender;
 import client.controllers.ClientReceiver;
 
@@ -77,6 +78,7 @@ public class SceneManager {
                 baseController.setSceneManager(this);
                 baseController.setClientModel(ClientModel.getInstance());
                 baseController.setClientSender(ClientSender.getInstance());
+                baseController.setSearchModel(SearchModel.getInstance());
                 baseController.setDependencies();
                 baseController.render();
             }

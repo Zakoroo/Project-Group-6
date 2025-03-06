@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox fx:id="chatBox" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1">
+<HBox fx:id="chatBox" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-padding: 10; -fx-background-radius: 8px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <ImageView fx:id="profileImage" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -14,7 +14,7 @@
          </image></ImageView>
         <VBox spacing="5.0">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
                     <children>
                         <Label fx:id="userNameLabel" style="-fx-font-weight: bold;" text="Username" />
                         <Label fx:id="timeStampLabel" style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:00 PM" />

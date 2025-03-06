@@ -2,6 +2,7 @@ package client.controllers;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.sql.Timestamp;
 
 import shared.Container;
 
@@ -97,13 +98,17 @@ public class ClientSender {
         sendRequest(sendMessageRequest);
     }
 
-    public void getHistory(java.sql.Timestamp timestamp) throws IOException, ClassNotFoundException {
+    public void getHistory() throws Exception{
+        this.getHistory(new Timestamp(0));
+    }
+
+    public void getHistory(Timestamp timestamp) throws Exception {
         System.out.println("Get chat history request sent");
         Container getHistoryRequest = new Container("get-history", timestamp);
         sendRequest(getHistoryRequest);
     }
 
-    private void sendRequest(Container request) throws IOException {
+    private void sendRequest(Container request) throws Exception {
         oos.writeObject(request);
         oos.flush();
     }
