@@ -6,8 +6,8 @@ import client.controllers.*;
 import client.models.ClientModel;
 import client.models.SearchModel;
 
-public class ClientDriver extends Application {
 
+public class ClientDriver extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {

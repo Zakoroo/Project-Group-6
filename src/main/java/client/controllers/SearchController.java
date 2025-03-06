@@ -7,8 +7,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import shared.ChatRoom;
 
-public class SearchController extends BaseController {
 
+public class SearchController extends BaseController {
     @FXML
     private Label errorLabel;
 
@@ -77,5 +77,4 @@ public class SearchController extends BaseController {
             e.printStackTrace();
         }
     }
-
 }

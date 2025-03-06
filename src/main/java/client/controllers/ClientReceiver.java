@@ -2,19 +2,14 @@ package client.controllers;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
-
 import shared.ChatRoom;
 import shared.Container;
 import shared.Message;
 import client.SceneManager;
-import client.models.*;
+import client.models.ClientModel;
+import client.models.SearchModel;
 
 public class ClientReceiver implements Runnable {
     private static ClientReceiver instance;
@@ -32,9 +27,9 @@ public class ClientReceiver implements Runnable {
     }
 
     public static ClientReceiver getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             throw new IllegalStateException("ClientReceiver may have not been initialized!");
-        } 
+        }
         return instance;
     }
 
@@ -58,7 +53,6 @@ public class ClientReceiver implements Runnable {
     public void run() {
         Platform.runLater(() -> {
 
-            
         });
         try {
             while (true) {
@@ -151,7 +145,7 @@ public class ClientReceiver implements Runnable {
     private void handleReceiveMessage(Object data) {
         if (data instanceof Message) {
             Message message = (Message) data;
-            
+
             try {
                 clientModel.addMessage(message);
             } catch (Exception e) {
@@ -204,9 +198,6 @@ public class ClientReceiver implements Runnable {
         if (data instanceof ChatRoom) {
             ChatRoom chatroom = (ChatRoom) data;
             clientModel.addChatRoom(chatroom);
-
-            // TODO: update the main view
-
         }
     }
 

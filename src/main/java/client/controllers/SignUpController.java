@@ -6,7 +6,6 @@ import javafx.scene.control.*;
 
 
 public class SignUpController extends BaseController {
-
     @FXML
     private Hyperlink alreadyRegistered;
 

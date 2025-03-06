@@ -8,8 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class SignInController extends BaseController {
 
+public class SignInController extends BaseController {
     @FXML
     private Label errorLabel;
 
@@ -30,25 +30,16 @@ public class SignInController extends BaseController {
 
     private ClientSender clientSender;
 
-    
-
     @FXML
     public void initialize() {
         errorLabel.setText("");
     }
 
     @Override
-    public void setDependencies() {
-        // TODO Auto-generated method stub
-        
-    }
+    public void setDependencies() {}
 
     @Override
-    public void render() {
-        // TODO Auto-generated method stub
-        
-    }
-
+    public void render() {}
 
     public SignInController(){
         //Empty constructor

@@ -2,14 +2,19 @@ package server;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.sql.*;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.postgresql.*;
-
+import org.postgresql.PGNotification;
+import org.postgresql.PGConnection;
 import shared.Container;
 import shared.Message;
+
 
 public class NotificationHandler implements Runnable {
     Connection connection;

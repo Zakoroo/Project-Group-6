@@ -5,18 +5,10 @@ import java.io.File;
 import java.nio.file.Files;
 import java.io.IOException;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
-
-import client.models.ClientModel;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -26,10 +18,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import shared.ChatRoom;
 import shared.Message;
+
 
 public class MainController extends BaseController {
     private final static long SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB

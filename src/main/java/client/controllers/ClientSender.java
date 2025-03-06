@@ -1,10 +1,9 @@
 package client.controllers;
 
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.sql.Timestamp;
-
 import shared.Container;
+
 
 public class ClientSender {
     private static ClientSender instance;

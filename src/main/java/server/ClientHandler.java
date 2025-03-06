@@ -1,11 +1,19 @@
 package server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import com.zaxxer.hikari.*;
-import java.sql.*;
-import shared.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import shared.Message;
+import shared.ChatRoom;
+import shared.Container;
+
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;

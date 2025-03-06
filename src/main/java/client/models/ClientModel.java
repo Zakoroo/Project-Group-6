@@ -1,6 +1,5 @@
 package client.models;
 
-
 import java.util.List;
 import javafx.beans.property.StringProperty;
 import shared.ChatRoom;
@@ -8,6 +7,7 @@ import shared.Message;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 
 public class ClientModel {
     private static ClientModel instance;
