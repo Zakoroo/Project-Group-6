@@ -67,6 +67,7 @@ public class MainController extends BaseController {
 
     @FXML
     public void initialize() {
+        errorLabel.setText("");
     }
 
     @Override
@@ -83,6 +84,7 @@ public class MainController extends BaseController {
             if (newChat != null) {
                 try {
                     clientSender.connectChat(newChat.name());
+                    chatContainer.getChildren().clear();
                     clientSender.getHistory();
                 } catch (Exception e) {
                     e.printStackTrace();

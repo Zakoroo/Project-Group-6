@@ -34,6 +34,11 @@ public class SignInController extends BaseController {
 
     @FXML
     public void initialize() {
+        errorLabel.setText("");
+    }
+
+    @Override
+    public void setDependencies() {
         // TODO Auto-generated method stub
         
     }
@@ -44,11 +49,6 @@ public class SignInController extends BaseController {
         
     }
 
-    @Override
-    public void setDependencies() {
-        // TODO Auto-generated method stub
-        
-    }
 
     public SignInController(){
         //Empty constructor

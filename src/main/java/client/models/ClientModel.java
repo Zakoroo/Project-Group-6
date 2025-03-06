@@ -69,6 +69,8 @@ public class ClientModel {
                 this.connectedChatRoom = chatroom;
             }
         }
+
+        history.clear();
     }
 
     public ObservableList<Message> getHistory() {

@@ -19,7 +19,9 @@ public class SearchController extends BaseController {
     private ListView<ChatRoom> searchResultsList;
 
     @FXML
-    public void initialize() {}
+    public void initialize() {
+        errorLabel.setText("");
+    }
 
     @Override
     public void setDependencies() {

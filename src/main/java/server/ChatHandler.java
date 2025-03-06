@@ -29,12 +29,17 @@ public class ChatHandler {
         return null;
     }
 
-    public List<ChatRoom> findChat(String searchTerm) {
+    public List<ChatRoom> findChat(String searchTerm, String username) {
         List<ChatRoom> chatRooms = new ArrayList<>();
-        String sql = "SELECT * FROM ChatRooms WHERE chatname ~ ? ORDER BY chatname ASC;";
+        String sql = """
+            SELECT * FROM ChatRooms WHERE chatname ~ ? 
+            AND ChatRooms.chatname NOT IN (SELECT chatName FROM ChatMembers WHERE username = ?)
+            ORDER BY chatname ASC;
+        """;
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, searchTerm);
+            ps.setString(2, username);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {

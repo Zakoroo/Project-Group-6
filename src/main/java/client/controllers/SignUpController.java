@@ -34,25 +34,16 @@ public class SignUpController extends BaseController {
     @FXML
     private TextField usernameField;
 
-    private ClientSender clientSender;
-
     @Override
     public void initialize() {
-        // TODO Auto-generated method stub
-        
+        errorLabel.setText("");
     }
 
     @Override
-    public void render() {
-        // TODO Auto-generated method stub
-        
-    }
+    public void render() {}
 
     @Override
-    public void setDependencies() {
-        // TODO Auto-generated method stub
-        
-    }
+    public void setDependencies() {}
 
     @FXML
     void handleAlreadyRegistered(ActionEvent event) {

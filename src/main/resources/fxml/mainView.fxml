@@ -26,7 +26,7 @@
             <Label fx:id="currentUserLabel" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Current user" />
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="SignOutBtn" mnemonicParsing="false" onAction="#handleSignOut" style="-fx-background-radius: 8px; -fx-font-weight: bold; -fx-background-color: #f38078;" text="SIGN OUT">
+                  <Button fx:id="SignOutBtn" mnemonicParsing="false" onAction="#handleSignOut" style="-fx-background-radius: 8px; -fx-font-weight: bold; -fx-background-color: #f38078; -fx-text-fill: white;" text="SIGN OUT">
                      <graphic>
                         <FontAwesomeIconView fill="#a82b2b" glyphName="SIGN_OUT" size="24" />
                      </graphic>
@@ -51,7 +51,7 @@
             </ScrollPane>
             <HBox alignment="CENTER_LEFT" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" VBox.vgrow="NEVER">
                <children>
-                  <Button fx:id="addGroupBtn" mnemonicParsing="false" onAction="#handleAddGroup" style="-fx-background-radius: 8px; -fx-font-weight: bold;" text="ADD GROUP">
+                  <Button fx:id="addGroupBtn" mnemonicParsing="false" onAction="#handleAddGroup" style="-fx-background-radius: 8px; -fx-font-weight: bold; -fx-background-color: #007bff; -fx-text-fill: white;" text="ADD GROUP">
                      <graphic>
                         <FontAwesomeIconView fill="#003a80" glyphName="PLUS_CIRCLE" size="24" />
                      </graphic>
@@ -79,7 +79,7 @@
    </center>
 
    <bottom>
-      <VBox prefHeight="79.0" prefWidth="704.0" spacing="10.0" style="-fx-background-color: #e6e6e6;" BorderPane.alignment="CENTER">
+      <VBox prefHeight="79.0" prefWidth="704.0" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-padding: 10;" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
@@ -93,7 +93,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </TextField>
-                  <Button fx:id="SendBtn" layoutX="617.0" layoutY="21.0" mnemonicParsing="false" onAction="#handleSendMessage" style="-fx-background-radius: 8px; -fx-font-weight: bold;" text="SEND">
+                  <Button fx:id="SendBtn" layoutX="617.0" layoutY="21.0" mnemonicParsing="false" onAction="#handleSendMessage" style="-fx-background-radius: 8px; -fx-font-weight: bold; -fx-background-color: #007bff; -fx-text-fill: white;" text="SEND">
                      <graphic>
                         <FontAwesomeIconView fill="#003a80" glyphName="PAPER_PLANE" size="24" />
                      </graphic>
