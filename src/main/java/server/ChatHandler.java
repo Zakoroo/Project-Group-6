@@ -13,18 +13,20 @@ public class ChatHandler {
         this.dataSource = dataSource;
     }
 
-    public boolean createChat(String chatName, String chatHost) {
+    public ChatRoom createChat(String chatName, String chatHost) {
         String sql = "INSERT INTO ChatRooms (chatname, chathost) VALUES (?, ?);";
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, chatName);
             ps.setString(2, chatHost);
             int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            if (rowsAffected > 0) {
+                return new ChatRoom(chatName, chatHost, new ArrayList<Message>()); 
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public List<ChatRoom> findChat(String searchTerm) {
@@ -101,6 +103,25 @@ public class ChatHandler {
         }
         return false;
     }
+
+    public List<ChatRoom> getJoinedChatRooms(String username) {
+        List<ChatRoom> chatRooms = new ArrayList<>();
+        String sql = "SELECT * FROM Chatrooms WHERE chatname IN (SELECT chatname FROM Chatmembers WHERE username = ?);";
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String chatname = rs.getString("chatname");
+                String chatHost = rs.getString("chathost");
+                chatRooms.add(new ChatRoom(chatname, chatHost, new ArrayList<>()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return chatRooms;
+    } 
 
     public boolean sendMessage(Message msg, String chatname) {
         String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imagedata, timestamp) VALUES (?,?,?,?,?, CURRENT_TIMESTAMP);";

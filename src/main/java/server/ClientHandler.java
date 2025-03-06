@@ -88,6 +88,8 @@ public class ClientHandler implements Runnable {
                 return handleSendMessage(data);
             case "get-history":
                 return handleGetHistory(data);
+            case "get-joined-chats":
+                return handGetJoinedChats(data);
             default:
                 System.out.println("Received unknown command: " + command);
                 return new Container("error", "Unknown command: " + command);
@@ -192,10 +194,9 @@ public class ClientHandler implements Runnable {
                 System.out.println("Parsed params are empty");
                 return new Container("error", "Invalid data!");
             }
-            boolean success = chatHandler.createChat(params.get("chatname"), username);
-            if (success) {
-                return new Container("create-chat-success",
-                        "Chat created successfully with name: " + params.get("chatname"));
+            ChatRoom chatRoom = chatHandler.createChat(params.get("chatname"), username);
+            if (chatRoom != null) {
+                return new Container("create-chat-success", chatRoom);
             } else {
                 return new Container("error", "Chatroom already exists");
             }
@@ -276,6 +277,19 @@ public class ClientHandler implements Runnable {
             }
             List<ChatRoom> chatRooms = chatHandler.findChat(params.get("tofind"));
             return new Container("find-chat-success", chatRooms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
+    }
+
+    private Container handGetJoinedChats(Object data) {
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        try {
+            List<ChatRoom> chatRooms = chatHandler.getJoinedChatRooms(username);
+            return new Container("get-joined-chats-success", chatRooms);
         } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());

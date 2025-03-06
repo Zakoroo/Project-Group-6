@@ -2,7 +2,6 @@ package client.controllers;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -26,10 +25,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import shared.ChatRoom;
 
-public class MainController {
+public class MainController extends BaseController {
     
     private final static long SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB
+
+    @FXML
+    private Label currentUserLabel;
     
     @FXML
     private Button SendBtn;
@@ -44,7 +47,7 @@ public class MainController {
     private Button attachImage;
 
     @FXML
-    private ListView<String> chatListView;
+    private ListView<ChatRoom> chatListView;
 
     @FXML
     private VBox chatContainer;
@@ -56,17 +59,39 @@ public class MainController {
     private Label errorLabel;
 
     @FXML
-    void handleAddGroup(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/searchView.fxml"));
-        Parent root = loader.load();
+    void initialize() {
+        
+    }
 
-        Stage popupStage = new Stage();
-        popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.setTitle("Add Group");
-        Scene scene = new Scene(root);
-        popupStage.setScene(scene);
-        popupStage.setResizable(false);
-        popupStage.showAndWait();
+    @Override
+    public void setDependencies() {
+        if (clientModel == null) {
+            System.err.println("ERROR: client model is not initialized yet!");
+            return;
+        }
+
+        currentUserLabel.textProperty().bind(clientModel.usernameProperty());
+        chatListView.setItems(clientModel.getJoinedChatRooms());
+
+        chatListView.getSelectionModel().selectedItemProperty().addListener((observable, oldChat, newChat) -> {
+            if (newChat != null) {
+                clientModel.setConnectedChatRoom(newChat.name());
+                System.out.println("Connected chat updated: " + newChat.name());
+            }
+        });
+    }
+
+    public void render() {
+        try {
+            clientSender.getJoinedChats();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void handleAddGroup(ActionEvent event) throws IOException {
+        sceneManager.showPopup("/fxml/searchView.fxml", "Search tool");
     }
 
     @FXML
@@ -117,7 +142,7 @@ public class MainController {
     public void handleSendMessage(ActionEvent event) {
         if (!textMessageField.getText().isEmpty()) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ChatBox.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/chatBox.fxml"));
                 HBox chatBox = loader.load();
 
                 Label messageLabel = (Label) chatBox.lookup("#messageLabel");
@@ -131,20 +156,21 @@ public class MainController {
                 profileImage.setImage(new Image(getClass().getResource("/pictures/user_1.png").toExternalForm()));
 
                 chatContainer.getChildren().add(chatBox);
+                String textMessage = textMessageField.getText();
+                System.out.println("this is what is gonna be sent"+textMessage);
+                clientSender.sendMessage(textMessage);
                 textMessageField.clear();
-
-                handleReceiveMessage("Other User", "This is a response message.");
-
+                clientSender.sendMessage(textMessage);
             } catch (Exception e) {
                 errorLabel.setText("Failed to send message.");
                 e.printStackTrace();
             }
         }
     }
-
+    @FXML
     public void handleReceiveMessage(String sender, String message) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/OtherUserChatBox.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/otherUserChatBox.fxml"));
             HBox chatBox = loader.load();
 
             Label messageLabel = (Label) chatBox.lookup("#messageLabel");
@@ -166,7 +192,7 @@ public class MainController {
 
     public void handleSendImage(Image image) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ImageChatBox.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageChatBox.fxml"));
             HBox chatBox = loader.load();
 
             Label userNameLabel = (Label) chatBox.lookup("#userNameLabel");
@@ -180,8 +206,7 @@ public class MainController {
             messageImage.setImage(image);
 
             chatContainer.getChildren().add(chatBox);
-
-            handleReceiveImage(new Image(getClass().getResource("/pictures/pigeon.jpg").toExternalForm()));
+            clientSender.sendMessage(image);
         } catch (Exception e) {
             errorLabel.setText("Failed to send image.");
             e.printStackTrace();
@@ -190,7 +215,7 @@ public class MainController {
 
     public void handleReceiveImage(Image image) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/otherUserChatBox.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/otherUserImageChatBox.fxml"));
             HBox chatBox = loader.load();
 
             Label userNameLabel = (Label) chatBox.lookup("#userNameLabel");
@@ -213,12 +238,5 @@ public class MainController {
     @FXML
     void handleSignOut(ActionEvent event) {
         chatContainer.getChildren().clear();
-    }
-
-    @FXML
-    public void populateChatListView() {
-        List<String> chatGroups = Arrays.asList("General Chat", "Project Team", "Friends", "Study Group");
-        ObservableList<String> chatList = FXCollections.observableArrayList(chatGroups);
-        chatListView.setItems(chatList);
     }
 }

@@ -3,38 +3,60 @@ package client.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.property.StringProperty;
+import shared.ChatRoom;
+import shared.Message;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import shared.ChatRoom;
 import shared.Message;
+import java.util.List;
 
 public class ClientModel {
-    private String username;
-    private List<ChatRoom> joinedChatRooms;
+    private static ClientModel instance;
+    private StringProperty username = new SimpleStringProperty("");
+    private ObservableList<ChatRoom> joinedChatRooms;
     private ChatRoom connectedChatRoom;
 
-    public ClientModel() {
-        this.joinedChatRooms = new ArrayList<>();
+
+    public static ClientModel getInstance() {
+        if (instance == null) {
+            instance = new ClientModel();
+        }
+        return instance;
     }
 
-    public String getUsername() {
+    private ClientModel() {
+        this.joinedChatRooms = FXCollections.observableArrayList();
+    }
+
+    public StringProperty usernameProperty() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getUsername() {
+        return username.get();
     }
 
-    public List<ChatRoom> getJoinedChatRooms() {
+    public void setUsername(String username) {
+        this.username.set(username);
+    }
+
+    public ObservableList<ChatRoom> getJoinedChatRooms() {
         return joinedChatRooms;
     }
 
-    public void setJoinedChatRooms(List<ChatRoom> joinedChatRooms) {
-        this.joinedChatRooms = joinedChatRooms;
+    public void setJoinedChatRooms(ObservableList<ChatRoom> joinedChatRooms) {
+        this.joinedChatRooms.setAll(joinedChatRooms);
     }
 
     public void addChatRoom(ChatRoom chatroom) {
         this.joinedChatRooms.add(chatroom);
+    }
+
+    public void addChatRooms(List<ChatRoom> chatrooms) {
+        this.joinedChatRooms.addAll(chatrooms);
     }
 
     public void removeChatRoom(String chatname) {
@@ -53,21 +75,29 @@ public class ClientModel {
         }
     }
 
-    public List<Message> getHistory() {
-        return connectedChatRoom.history();
+    public ObservableList<Message> getHistory() {
+        if (connectedChatRoom != null) {
+            return FXCollections.observableArrayList(connectedChatRoom.history());
+        } else {
+            return FXCollections.observableArrayList();
+        }
     }
 
     public void setHistory(List<Message> history) {
-        connectedChatRoom.history().addAll(history);
+        if (connectedChatRoom != null) {
+            connectedChatRoom.history().addAll(history);
+        }
     }
 
     public void addMessage(Message message) {
-        connectedChatRoom.history().add(message);
+        if (connectedChatRoom != null) {
+            connectedChatRoom.history().add(message);
+        }
     }
 
     public void clearModel() {
-        this.username = null;
-        this.joinedChatRooms = null;
+        this.username.set("");
+        this.joinedChatRooms.clear();
         this.connectedChatRoom = null;
     }
 }

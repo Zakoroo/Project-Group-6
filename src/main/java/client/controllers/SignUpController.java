@@ -2,11 +2,8 @@ package client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
+
 
 public class SignUpController extends BaseController {
 
@@ -42,12 +39,11 @@ public class SignUpController extends BaseController {
     // Setter for ClientSender injection
     public void setClientSender(ClientSender clientSender) {
         this.clientSender = clientSender;
-        System.out.println("ClientSender has been set in SignUpController!"); // Debug message
     }
 
     @FXML
     void handleAlreadyRegistered(ActionEvent event) {
-        switchScene("/fxml/signinView.fxml", event, clientSender);
+        sceneManager.switchScene("/fxml/signinView.fxml");
     }
 
     @FXML
@@ -92,6 +88,6 @@ public class SignUpController extends BaseController {
         }
 
         // Navigate to the sign-in view upon successful sign-up
-        switchScene("/fxml/signinView.fxml", event, clientSender);
+        sceneManager.switchScene("/fxml/signinView.fxml");
     }
 }

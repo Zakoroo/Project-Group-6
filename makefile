@@ -13,7 +13,7 @@ SQL_FILE = src/main/resources/db/runsetup.sql
 DB_HOST ?= localhost
 DB_NAME ?= postgres
 DB_USER ?= postgres
-DB_PASSWORD ?= chalmers
+DB_PASSWORD ?= localhost123456
 DB_SERVER ?= $(DB_HOST)
 DB_PORT ?= 5432
 

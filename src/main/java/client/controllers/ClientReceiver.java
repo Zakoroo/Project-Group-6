@@ -1,37 +1,69 @@
 package client.controllers;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import shared.ChatRoom;
 import shared.Container;
 import shared.Message;
-import client.models.*;
+import client.SceneManager;
+import client.models.*;;
 
 public class ClientReceiver implements Runnable {
+    private static ClientReceiver instance;
     private ObjectInputStream ois;
-    private ClientModel model;
-    private BaseController currentController;
+    private ClientModel clientModel;
+    private SceneManager sceneManager;
 
-    public void setCurrentController(BaseController currentController) {
-        this.currentController = currentController;
+    public static void initialize(ObjectInputStream ois) {
+        if (instance == null) {
+            instance = new ClientReceiver(ois);
+        } else {
+            System.out.println("ClientReceiver already initialized!");
+        }
     }
 
-    public ClientReceiver(ObjectInputStream ois, BaseController currentController) {
+    public static ClientReceiver getInstance() {
+        if(instance == null) {
+            throw new IllegalStateException("ClientReceiver may have not been initialized!");
+        } 
+        return instance;
+    }
+
+    private ClientReceiver(ObjectInputStream ois) {
         this.ois = ois;
-        this.currentController = currentController;
+    }
+
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
+
+    public void setClientModel(ClientModel clientModel) {
+        this.clientModel = clientModel;
     }
 
     @Override
     public void run() {
+        Platform.runLater(() -> {
+
+            
+        });
         try {
             while (true) {
+                if (ois == null) {
+                    System.out.println("Input stream is null!");
+                }
                 Object object = ois.readObject();
                 if (object instanceof Container) {
                     Container response = (Container) object;
-                    updateModel(response);
+                    Platform.runLater(() -> updateModel(response));
 
                 } else {
                     System.out.println("Object is not of type container!");
@@ -43,6 +75,7 @@ public class ClientReceiver implements Runnable {
     }
 
     private void updateModel(Container container) {
+        System.out.println("Container received");
         String command = container.getCommand();
         Object data = container.getData();
         switch (command) {
@@ -79,20 +112,24 @@ public class ClientReceiver implements Runnable {
             case "get-history-success":
                 handleGetHistory(data);
                 break;
+            case "get-joined-chats-success":
+                handGetJoinedChats(data);
+                break;
             default:
-                System.out.println("Received unknown command: " + command);
+                // print mysterious bugs
+                System.out.println(command + ": " + ((String) data));
         }
     }
 
-    // updates the model upon retreiving the history form the server
+    // updates the clientModel upon retreiving the history form the server
     // update the main view
     private void handleGetHistory(Object data) {
         if (data instanceof List) {
             List<Message> history = (List<Message>) data;
-            if (model.getHistory() == null) {
-                model.setHistory(history);
+            if (clientModel.getHistory() == null) {
+                clientModel.setHistory(history);
             } else {
-                history.forEach(m -> model.addMessage(m));
+                history.forEach(m -> clientModel.addMessage(m));
             }
 
             // TODO: update the main view here
@@ -108,13 +145,13 @@ public class ClientReceiver implements Runnable {
         }
     }
 
-    // updates the history to the currently connected chat in the model with a
+    // updates the history to the currently connected chat in the clientModel with a
     // message
     // update the main view
     private void handleReceiveMessage(Object data) {
         if (data instanceof Message) {
             Message message = (Message) data;
-            model.addMessage(message);
+            clientModel.addMessage(message);
 
             // TODO: render the changes in the main view
         }
@@ -126,7 +163,7 @@ public class ClientReceiver implements Runnable {
     private void handleQuitChat(Object data) {
         if (data instanceof String) {
             String chatname = (String) data;
-            model.removeChatRoom(chatname);
+            clientModel.removeChatRoom(chatname);
 
             // TODO: render the changes in the main view
         }
@@ -138,15 +175,16 @@ public class ClientReceiver implements Runnable {
             ArrayList<ChatRoom> searchResult = (ArrayList<ChatRoom>) data;
 
             // TODO: update the search view with the searchResult
+            
         }
     }
 
-    // update the model by setting the connected chatroom
+    // update the clientModel by setting the connected chatroom
     // updat the main view
     private void handleConnectChat(Object data) {
         if (data instanceof String) {
             String chatname = (String) data;
-            model.setConnectedChatRoom(chatname);
+            clientModel.setConnectedChatRoom(chatname);
 
             // TODO: update the main view
         }
@@ -157,28 +195,36 @@ public class ClientReceiver implements Runnable {
     private void handleJoinChat(Object data) {
         if (data instanceof ChatRoom) {
             ChatRoom chatroom = (ChatRoom) data;
-            model.addChatRoom(chatroom);
+            clientModel.addChatRoom(chatroom);
 
             // TODO: update the main view
+
+        }
+    }
+
+    private void handGetJoinedChats(Object data) {
+        if (data instanceof List) {
+            List<ChatRoom> chatRooms = (List) data;
+            clientModel.setJoinedChatRooms(FXCollections.observableArrayList(chatRooms));
         }
     }
 
     // prints out the success message for debugging purposes
     private void handleCreateChat(Object data) {
         if (data instanceof String) {
-            String string = (String) data;
-            System.out.println(string);
+            ChatRoom chatRoom = (ChatRoom) data;
+            clientModel.addChatRoom(chatRoom);
 
             // TODO: close the prompt and send a connect request
         }
     }
 
-    // upon deleting the currect account the client model must also be cleared
+    // upon deleting the currect account the client clientModel must also be cleared
     // switch to sign in view and indicate that the user got deleted
     private void handleDeleteUser(Object data) {
         if (data instanceof String) {
             String string = (String) data;
-            model.clearModel();
+            clientModel.clearModel();
             System.out.println(string);
 
             // TODO: if not implemented then ignore
@@ -194,26 +240,28 @@ public class ClientReceiver implements Runnable {
 
             // TODO: switch to sign in with
             try {
-                currentController.switchScene("fxml/signinView.fxml", null);
+                sceneManager.switchScene("/fxml/signinView.fxml");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    // updates the model with the new username
+    // updates the clientModel with the new username
     // switch to the main view
     private void handleSignin(Object data) {
         if (data instanceof String) {
             String username = (String) data;
 
-            // TODO: switch to the main view
             try {
-                currentController.switchScene("fxml/mainView.fxml", null);
+                clientModel.setUsername(username);
+                // username
+                // joinded chatrooms
+
+                sceneManager.switchScene("/fxml/mainView.fxml");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
 }

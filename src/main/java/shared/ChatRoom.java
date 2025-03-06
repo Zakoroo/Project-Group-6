@@ -10,4 +10,9 @@ public record ChatRoom (
     
 ) implements Serializable {
     private static final long serialVersionUID = 42L;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

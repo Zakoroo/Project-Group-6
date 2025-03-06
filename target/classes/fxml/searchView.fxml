@@ -39,12 +39,12 @@
          <children>
             <HBox prefWidth="444.0" spacing="10.0" style="-fx-padding: 10;">
                <children>
-                  <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#handleFindChatRooms" text="Search">
+                  <Button mnemonicParsing="false" onAction="#btnHandleSearch" text="Search">
                      <graphic>
                         <FontAwesomeIconView glyphName="SEARCH" />
                      </graphic>
                   </Button>
-                  <Button fx:id="searchBtn1" mnemonicParsing="false" onAction="#handleFindChatRooms" text="Add">
+                  <Button mnemonicParsing="false" onAction="#btnHandleAdd" text="Add">
                      <graphic>
                         <FontAwesomeIconView glyphName="PLUS" />
                      </graphic>

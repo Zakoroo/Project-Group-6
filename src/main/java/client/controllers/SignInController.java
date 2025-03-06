@@ -7,12 +7,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import java.io.IOException;
-import shared.Container;
 
 public class SignInController extends BaseController {
 
@@ -65,7 +59,6 @@ public class SignInController extends BaseController {
 
         try {
             clientSender.signin(username, password);
-            switchScene("/fxml/mainView.fxml", event, clientSender);
         } catch (Exception e) {
             errorLabel.setText("Sign in failed!");
         }
@@ -73,11 +66,11 @@ public class SignInController extends BaseController {
 
     @FXML
     public void handleRegisterNow(ActionEvent event) {
-        switchScene("/fxml/signupView.fxml", event, clientSender);
+        sceneManager.switchScene("/fxml/signupView.fxml");
     }
 
     @FXML
     public void handleSettings(ActionEvent event) {
-        switchScene("/fxml/settingsView.fxml", event, clientSender);
+        sceneManager.switchScene("/fxml/settingsView.fxml");
     }
 }
