@@ -227,10 +227,8 @@ public class ClientHandler implements Runnable {
                 System.out.println("Parsed params are empty");
                 return new Container("error", "Invalid data!");
             }
-
             ChatRoom joinedChat = chatHandler.joinChat(username, params.get("chatname"));
 
-            // TODO: return chatroom instead of chatname
             if (joinedChat != null) {
                 return new Container("join-chat-success", joinedChat);
             } else {
@@ -257,7 +255,6 @@ public class ClientHandler implements Runnable {
             }
             chatroom = chatHandler.connectChat(username, params.get("chatname"));
             System.out.println("User connecting to chatroom: " + chatroom.name());
-            
             if(chatroom != null) {
                 notificationHandler.removeListener(chatroom.name(), oos);
                 notificationHandler.addListener(params.get("chatname"), oos);

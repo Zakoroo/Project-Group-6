@@ -1,8 +1,8 @@
 package shared;
 
-
 import java.io.Serializable;
 import java.util.List;
+
 
 public record ChatRoom (
     String name, 
