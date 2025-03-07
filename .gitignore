@@ -26,6 +26,8 @@ replay_pid*
 # Configuration files
 *.properties
 
-
 # Input files
 *.lst
+
+# Other files 
+*.md
