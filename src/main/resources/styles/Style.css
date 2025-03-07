@@ -1,0 +1,22 @@
+/* style.css: Global styling for Chat Application */
+
+/* Root scene style (optional) */
+.root {
+    -fx-background-color: #fafafa;
+}
+
+/* Buttons */
+.button {
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* Text fields */
+.text-field {
+    -fx-prompt-text-fill: #aaaaaa;
+}
+
+/* Example label styling */
+.label {
+    -fx-font-size: 14px;
+}

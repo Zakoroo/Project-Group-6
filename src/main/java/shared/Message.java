@@ -1,8 +1,8 @@
 package shared;
 
 import java.io.Serializable;
-import java.sql.Time;
 import java.sql.Timestamp;
+
 
 public record Message (
     String username, 
@@ -20,5 +20,14 @@ implements Serializable {
 
     public Message(String username, byte[] image, Timestamp timestamp) {
         this(username, "image", null, image, timestamp);
+    }
+
+    @Override
+    public final String toString() {
+        if(type.equals("text")) {
+            return username + ": [" + type + "]: " + text;
+        } else {
+            return username + ": [" + type + "]: (image data)"; 
+        }
     }
 }

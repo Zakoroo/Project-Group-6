@@ -1,71 +1,49 @@
 package client;
-import shared.Container;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.file.Files;
-import java.sql.Timestamp;
+import javafx.application.Application;
+import javafx.stage.Stage;
+import client.controllers.*;
+import client.models.ClientModel;
+import client.models.SearchModel;
 
-public class ClientDriver {
-    public static void main(String[] args) {
-        String serverAddress = "localhost";
-        int port = 8005;
 
-        try (Socket socket = new Socket(serverAddress, port);
-             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
+public class ClientDriver extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            primaryStage.setTitle("Chat Application");
 
-            RequestHandler requestHandler = new RequestHandler(oos, ois);
- 
-            // 1. Signup
-            //requestHandler.signup("TestNick", "TestUser", "test@example.com", "password123");
- 
-            // 2. Signin
-            requestHandler.signin("TestUser", "password123"); 
- 
-            // 3. Create Chatroom
-            //requestHandler.createChat("TestChat"); 
+            // Initialize and create scene manager
+            SceneManager.initialize(primaryStage);
+            SceneManager.getInstance().switchScene("/fxml/signinView.fxml");
 
-            // 4. Join Chatroom
-            //requestHandler.joinChat("TestChat");
+            // set fields for receiver
+            ClientReceiver.getInstance().setSceneManager(SceneManager.getInstance());
+            ClientReceiver.getInstance().setClientModel(ClientModel.getInstance());
+            ClientReceiver.getInstance().setSearchModel(SearchModel.getInstance());
 
-            // 5. Connect to Chatroom
-            requestHandler.connectChat("TestChat");
+            // start the receiver
+            new Thread(ClientReceiver.getInstance()).start();
 
-            String imagePath = "C:\\Users\\user\\Desktop\\cat.jpg"; //change the path 
-            byte[] imageData = convertImageToByteArray(imagePath);
-
-            // 6. Find Chat
-            //requestHandler.findChat("Test");
-
-            // 7. Send Text Message
-            //requestHandler.sendMessage("Hello, this is a test message!");
-
-            // 8. Send Image
-            requestHandler.sendMessage(imageData);
- 
-            // 9. Get Chat History
-            requestHandler.getHistory(new Timestamp(System.currentTimeMillis() - 36000000)); // 10 hours ago
-
-            // 10. Quit Chat
-            //requestHandler.quitChat("TestChat");
-
-            // 11. Delete User
-            //requestHandler.deleteUser("password123");
-
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
+            System.err.println("Failed to start client: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private static byte[] convertImageToByteArray(String imagePath) {
-        File imageFile = new File(imagePath);
-        try {
-            return Files.readAllBytes(imageFile.toPath());
-        } catch (IOException e) {
-            System.err.println("Error reading image file: " + e.getMessage());
-            return null;
-        }
-    }
+    public static void main(String[] args) {
 
+        // connect to the server
+        ClientConnection connection = ClientConnection.getInstance();
+        try {
+            connection.connect("localhost", 8005);
+            ClientSender.initialize(connection.getOutputStream());
+            ClientReceiver.initialize(connection.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // launch the GUI
+        launch(args);
+    }
 }

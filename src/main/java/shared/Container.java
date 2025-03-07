@@ -2,6 +2,7 @@ package shared;
 
 import java.io.*;
 
+
 public class Container implements Serializable {
     private static final long serialVersionUID = 42L;
     
@@ -20,7 +21,7 @@ public class Container implements Serializable {
     public Object getData() {
         return data;
     }
-
+    
     public void setCommand(String command) {
         this.command = command;
     }
@@ -28,6 +29,7 @@ public class Container implements Serializable {
     public void setData(Object data) {
         this.data = data;
     }
+    
 
     @Override
     public String toString() {

@@ -1,11 +1,16 @@
 package server;
 
-import java.sql.*;
-import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariConfig;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
-import com.zaxxer.hikari.*;
+import java.io.IOException;
+import java.io.FileInputStream;
+
 
 public class ChatServer {
     public static final int PORT = 8005;

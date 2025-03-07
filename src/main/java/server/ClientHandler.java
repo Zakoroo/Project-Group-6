@@ -1,11 +1,19 @@
 package server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import com.zaxxer.hikari.*;
-import java.sql.*;
-import shared.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import shared.Message;
+import shared.ChatRoom;
+import shared.Container;
+
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
@@ -88,6 +96,8 @@ public class ClientHandler implements Runnable {
                 return handleSendMessage(data);
             case "get-history":
                 return handleGetHistory(data);
+            case "get-joined-chats":
+                return handGetJoinedChats(data);
             default:
                 System.out.println("Received unknown command: " + command);
                 return new Container("error", "Unknown command: " + command);
@@ -114,7 +124,7 @@ public class ClientHandler implements Runnable {
                     params.get("password"));
             if (success) {
                 username = params.get("username");
-                return new Container("signup-success", "user: " + username);
+                return new Container("signup-success", username);
             } else {
                 return new Container("error", "Something went wrong during signup");
             }
@@ -137,7 +147,7 @@ public class ClientHandler implements Runnable {
             boolean success = accountHandler.signin(params.get("username"), params.get("password"));
             if (success) {
                 username = params.get("username");
-                return new Container("signin-success", "You are now signed in as user: " + username);
+                return new Container("signin-success", username);
             } else {
                 return new Container("error", "Invalid credentials!");
             }
@@ -192,10 +202,9 @@ public class ClientHandler implements Runnable {
                 System.out.println("Parsed params are empty");
                 return new Container("error", "Invalid data!");
             }
-            boolean success = chatHandler.createChat(params.get("chatname"), username);
-            if (success) {
-                return new Container("create-chat-success",
-                        "Chat created successfully with name: " + params.get("chatname"));
+            ChatRoom chatRoom = chatHandler.createChat(params.get("chatname"), username);
+            if (chatRoom != null) {
+                return new Container("create-chat-success", chatRoom);
             } else {
                 return new Container("error", "Chatroom already exists");
             }
@@ -218,10 +227,10 @@ public class ClientHandler implements Runnable {
                 System.out.println("Parsed params are empty");
                 return new Container("error", "Invalid data!");
             }
-            boolean success = chatHandler.joinChat(username, params.get("chatname"));
-            if (success) {
-                return new Container("join-chat-success",
-                        "User " + username + " joined chat: " + params.get("chatname"));
+            ChatRoom joinedChat = chatHandler.joinChat(username, params.get("chatname"));
+
+            if (joinedChat != null) {
+                return new Container("join-chat-success", joinedChat);
             } else {
                 return new Container("error", "Failed to join chat: " + params.get("chatname"));
             }
@@ -246,11 +255,10 @@ public class ClientHandler implements Runnable {
             }
             chatroom = chatHandler.connectChat(username, params.get("chatname"));
             System.out.println("User connecting to chatroom: " + chatroom.name());
-
             if(chatroom != null) {
+                notificationHandler.removeListener(chatroom.name(), oos);
                 notificationHandler.addListener(params.get("chatname"), oos);
-                return new Container("connect-chat-success",
-                        "User " + username + " connected to chat: " + params.get("chatname"));
+                return new Container("connect-chat-success", params.get("chatname"));
             } else {
                 return new Container("error", "Chatroom not joined or chatroom nonexistent!");
             }
@@ -273,8 +281,21 @@ public class ClientHandler implements Runnable {
                 System.out.println("Parsed params are empty");
                 return new Container("error", "Invalid data!");
             }
-            List<ChatRoom> chatRooms = chatHandler.findChat(params.get("tofind"));
+            List<ChatRoom> chatRooms = chatHandler.findChat(params.get("tofind"), username);
             return new Container("find-chat-success", chatRooms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Container("error", "An error occurred: " + e.getMessage());
+        }
+    }
+
+    private Container handGetJoinedChats(Object data) {
+        if (username == null) {
+            return new Container("error", "User not logged in!");
+        }
+        try {
+            List<ChatRoom> chatRooms = chatHandler.getJoinedChatRooms(username);
+            return new Container("get-joined-chats-success", chatRooms);
         } catch (Exception e) {
             e.printStackTrace();
             return new Container("error", "An error occurred: " + e.getMessage());
@@ -297,8 +318,7 @@ public class ClientHandler implements Runnable {
             }
             boolean success = chatHandler.quitChat(username, params.get("chatname"));
             if (success) {
-                return new Container("quit-chat-success",
-                        "User " + username + " quit chat: " + params.get("chatname"));
+                return new Container("quit-chat-success", params.get("chatname"));
             } else {
                 return new Container("error", "Failed to quit chat: " + params.get("chatname"));
             }

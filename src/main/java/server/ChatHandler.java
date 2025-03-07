@@ -1,10 +1,16 @@
 package server;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import com.zaxxer.hikari.HikariDataSource;
-import shared.*;
+import shared.ChatRoom;
+import shared.Message;
+
 
 public class ChatHandler {
     private HikariDataSource dataSource;
@@ -13,26 +19,33 @@ public class ChatHandler {
         this.dataSource = dataSource;
     }
 
-    public boolean createChat(String chatName, String chatHost) {
+    public ChatRoom createChat(String chatName, String chatHost) {
         String sql = "INSERT INTO ChatRooms (chatname, chathost) VALUES (?, ?);";
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, chatName);
             ps.setString(2, chatHost);
             int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            if (rowsAffected > 0) {
+                return new ChatRoom(chatName, chatHost); 
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
-    public List<ChatRoom> findChat(String searchTerm) {
+    public List<ChatRoom> findChat(String searchTerm, String username) {
         List<ChatRoom> chatRooms = new ArrayList<>();
-        String sql = "SELECT * FROM ChatRooms WHERE chatname ~ ? ORDER BY chatname ASC;";
+        String sql = """
+            SELECT * FROM ChatRooms WHERE chatname ~ ? 
+            AND ChatRooms.chatname NOT IN (SELECT chatName FROM ChatMembers WHERE username = ?)
+            ORDER BY chatname ASC;
+        """;
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, searchTerm);
+            ps.setString(2, username);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -46,18 +59,28 @@ public class ChatHandler {
         return chatRooms;
     }
 
-    public boolean joinChat(String username, String chatname) {
-        String sql = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
+    public ChatRoom joinChat(String username, String chatname) {
+        String sql1 = "INSERT INTO ChatMembers (username, chatname) VALUES (?, ?);";
         try (Connection conn = dataSource.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, username);
-            ps.setString(2, chatname);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            PreparedStatement ps1 = conn.prepareStatement(sql1);
+            ps1.setString(1, username);
+            ps1.setString(2, chatname);
+            int rowsAffected = ps1.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                String sql2 = "SELECT * FROM ChatRooms WHERE chatname = ?;";
+                PreparedStatement ps2 = conn.prepareStatement(sql2);
+                ps2.setString(1, chatname);
+
+                ResultSet rs = ps2.executeQuery();
+                if(rs.next()) {
+                    return new ChatRoom(rs.getString("chatname"), rs.getString("chathost"));
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public ChatRoom connectChat(String username, String chatname) {
@@ -91,6 +114,25 @@ public class ChatHandler {
         }
         return false;
     }
+
+    public List<ChatRoom> getJoinedChatRooms(String username) {
+        List<ChatRoom> chatRooms = new ArrayList<>();
+        String sql = "SELECT * FROM Chatrooms WHERE chatname IN (SELECT chatname FROM Chatmembers WHERE username = ?);";
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String chatname = rs.getString("chatname");
+                String chatHost = rs.getString("chathost");
+                chatRooms.add(new ChatRoom(chatname, chatHost));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return chatRooms;
+    } 
 
     public boolean sendMessage(Message msg, String chatname) {
         String sql = "INSERT INTO Messages (username, chatname, type, textmsg, imagedata, timestamp) VALUES (?,?,?,?,?, CURRENT_TIMESTAMP);";

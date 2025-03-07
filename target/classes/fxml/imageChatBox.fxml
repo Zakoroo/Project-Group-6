@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox fx:id="chatBox" spacing="10.0" style="-fx-background-color: #e6e6e6; -fx-background-radius: 8px; -fx-padding: 10;" xmlns:fx="http://javafx.com/fxml">
+    <children>
+        <ImageView fx:id="profileImage" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+        <VBox spacing="5.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label fx:id="userNameLabel" style="-fx-font-weight: bold;" text="Username" />
+                        <Label fx:id="timeStampLabel" style="-fx-font-size: 10px; -fx-text-fill: gray;" text="12:00 PM" />
+                    </children>
+                </HBox>
+                <ImageView fx:id="messageImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            </children>
+        </VBox>
+    </children>
+</HBox>
