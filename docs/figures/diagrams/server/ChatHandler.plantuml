@@ -1,0 +1,16 @@
+@startuml ChatHandler
+package server {
+    class ChatHandler {
+        - HikariDataSource dataSource
+        + ChatHandler(HikariDataSource dataSource)
+        + ChatRoom createChat(String chatName, String chatHost)
+        + List<ChatRoom> findChat(String searchTerm, String username)
+        + ChatRoom joinChat(String username, String chatname)
+        + ChatRoom connectChat(String username, String chatname)
+        + boolean quitChat(String username, String chatname)
+        + List<ChatRoom> getJoinedChatRooms(String username)
+        + boolean sendMessage(Message msg, String chatname)
+        + List<Message> getHistory(String chatName, Timestamp timestamp)
+    }
+}
+@enduml

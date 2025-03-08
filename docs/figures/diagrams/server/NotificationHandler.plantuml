@@ -1,0 +1,18 @@
+@startuml NotificationHandler
+package server {
+    class NotificationHandler {
+        - Connection connection
+        - ConcurrentMap<String, CopyOnWriteArrayList<ObjectOutputStream>> chatListeners
+        + NotificationHandler(Connection connection)
+        + void addChatRoom(String chatname)
+        + void removeChatRoomIfEmpty(String chatname)
+        + void addListener(String chatname, ObjectOutputStream listener)
+        + void removeListener(String chatname, ObjectOutputStream listener)
+        + void run()
+        + void broadcast(String chatname)
+    }
+
+}
+NotificationHandler --> shared.Container
+NotificationHandler --> shared.Message
+@enduml

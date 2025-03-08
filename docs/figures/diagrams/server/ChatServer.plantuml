@@ -1,0 +1,12 @@
+@startuml ChatServer
+package server {
+    class ChatServer {
+        +{static} int PORT = 8005
+        +ChatServer()
+        -Connection dbConnectionInit() : Connection
+    }
+
+    ChatServer --> ClientHandler
+    ChatServer --> NotificationHandler
+}
+@enduml

@@ -29,5 +29,17 @@ replay_pid*
 # Input files
 *.lst
 
+# LaTex files
+*.aux
+*.bcf
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.run.xml
+*.gz
+*.toc
+
 # Other files 
 *.md

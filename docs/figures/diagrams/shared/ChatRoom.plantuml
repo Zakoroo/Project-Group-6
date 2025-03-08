@@ -1,0 +1,13 @@
+@startuml ChatRoom
+
+package shared {
+
+    class ChatRoom {
+        - String name
+        - String host
+        + {static} long serialVersionUID = 42
+        + String toString()
+    }
+}
+
+@enduml

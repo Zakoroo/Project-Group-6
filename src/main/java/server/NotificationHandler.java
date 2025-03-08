@@ -17,8 +17,8 @@ import shared.Message;
 
 
 public class NotificationHandler implements Runnable {
-    Connection connection;
-    ConcurrentMap<String, CopyOnWriteArrayList<ObjectOutputStream>> chatListeners;
+    private Connection connection;
+    private ConcurrentMap<String, CopyOnWriteArrayList<ObjectOutputStream>> chatListeners;
 
     public NotificationHandler(Connection connection) {
         this.connection = connection;

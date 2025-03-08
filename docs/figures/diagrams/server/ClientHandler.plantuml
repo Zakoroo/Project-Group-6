@@ -1,0 +1,38 @@
+@startuml ClientHandler
+package server {
+    class ClientHandler {
+        - Socket clientSocket
+        - AccountHandler accountHandler
+        - ChatHandler chatHandler
+        - NotificationHandler notificationHandler
+        - ChatRoom chatroom
+        - String username
+        - ObjectOutputStream oos
+        - ObjectInputStream ois
+
+        + ClientHandler(Socket clientSocket, HikariDataSource dataSource, NotificationHandler notificationHandler)
+        + void run()
+        - Container executeCommand(Container container)
+        - Container handleSignup(Object data)
+        - Container handleSignin(Object data)
+        - Container handleDeleteUser(Object data)
+        - Container handleCreateChat(Object data)
+        - Container handleJoinChat(Object data)
+        - Container handleConnectChat(Object data)
+        - Container handleFindChat(Object data)
+        - Container handGetJoinedChats(Object data)
+        - Container handleQuitChat(Object data)
+        - Container handleSendMessage(Object data)
+        - Container handleGetHistory(Object data)
+        - Map<String, String> parseData(String s)
+    }
+
+    ClientHandler --> AccountHandler
+    ClientHandler --> ChatHandler
+    ClientHandler --> NotificationHandler
+}
+
+ClientHandler --> shared.ChatRoom
+ClientHandler --> shared.Container
+ClientHandler --> shared.Message
+@enduml
