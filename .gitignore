@@ -40,6 +40,8 @@ replay_pid*
 *.run.xml
 *.gz
 *.toc
+*.bcf-SAVE-ERROR
+*.synctex
 
 # Other files 
 *.md
