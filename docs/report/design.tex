@@ -1,0 +1,50 @@
+\section{Design of the Chat Application}
+The development of our chat application follows a structured and iterative
+approach, ensuring flexibility and continuous improvements throughout the
+project. We began with an idea-storming phase, where we explored various
+features, user needs, and technical requirements. This brainstorming session
+helped us lay a strong foundation for the application's design and
+functionality.
+
+To maintain a clear and systematic development process, we employed Unified
+Modeling Language (UML) to create both a scenario model and a design model. The
+scenario model helped us visualize different user interactions and workflows
+within the application, while the design model provided a structured blueprint
+for the system architecture. These models serve as a guiding framework,
+ensuring that all components of the application are well-structured and
+logically connected.
+
+For the development, we chose Java as the primary programming language due to
+its robustness, cross-platform compatibility, and extensive support for
+network-based applications. Additionally, we utilized SQL for database
+management to handle user data, messages, and other relevant information
+efficiently. This combination of technologies ensures that our chat application
+is both scalable and secure.
+
+\subsection{Overview of Software Architecture}
+When it comes to designing a chat application one of the important things to
+consider is identifying the needs, delegating responsibilities and ensuring data
+integrity along the process of transferring information between sever and
+client. For instance how are we going to make sure a client cannot send
+messages to chat room they are not a member to? How are we going to disallow
+tampering with user information? Who is responsible for informing the user of
+new messages arriving at certain chat room? These are questions that must be
+addressed as early as possible during the design phase to allow seamless
+workflow during the implementation phase. 
+
+The first design decision we had to make is to determine how we can store data
+including user information, chat rooms and chat log. The idea we agreed upon 
+eventually was use a SQL database to store all data. But the question was how are
+we going to send information to the database. Are we going to allow the user application
+to interact immediately with a database or is there going to be an application on 
+the server which hosts the database that define the protocols of interaction and 
+data transfer? There were two main problems with allowing immediate
+
+\subsection{Server-Side Design}
+\subsubsection{Data Storage and Management}
+\subsubsection{Server TCP Communication}
+\subsection{Client-Side Design}
+\subsubsection{Client Authentication}
+\subsubsection{Client TCP Communication}
+\subsubsection{Client Interaction and User Interface}
+\subsection{Class Design with CRC Cards}

@@ -1,0 +1,60 @@
+\section{Introduction}
+This report presents the development of a software project undertaken as part
+of the Object-Oriented Application Development course at Chalmers University of
+Technology. Over a period of eight weeks, our team of four students
+collaborated to design and implement a structured and scalable application,
+applying key principles of object-oriented programming and software
+engineering. The project provided an opportunity to deepen our understanding of
+system architecture, design patterns, and collaborative software development.
+This report documents the development process, the technologies utilized, and
+the overall experience of working as a team in a structured software project.
+
+\subsection{Project Requirements}
+The chat application is designed to provide users with a seamless and
+interactive messaging experience. Users can easily connect to a chat, ensuring
+real-time communication with others. A persistent chat history is maintained,
+allowing users to access past conversations whenever needed. The application
+supports sending both text messages and images, enabling rich and dynamic
+interactions. Additionally, users can receive new messages or images instantly
+when sent by others, ensuring smooth and continuous communication. Each message
+or image clearly displays the sender’s identity, allowing users to track
+conversations effectively. These features work together to create an efficient
+and user-friendly chat system.
+
+\subsection{Scope of the Application}
+[placeholder text]
+
+\subsection{CRC Cards}
+CRC (Class-Responsibility-Collaboration) cards are used in software design to
+identify and define the key classes in a system, along with their
+responsibilities and interactions. They help in breaking down the system into
+manageable components by specifying what each class does and how it
+collaborates with others. In this chat application, the identified classes
+include User, Chat (room), and Message, with key responsibilities such as
+viewing chat history, sending text messages and images, and receiving new
+messages. However, additional classes are needed to manage server-client
+communication and database interactions. CRC cards aid in structuring the
+system effectively, ensuring clarity in design and functionality distribution.
+
+% CRC cards start %
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |p{6cm}||p{6cm}|  }
+        \hline
+        \multicolumn{2}{|c|}{Class: Chat room}   \\
+        \hline
+        Responsibility         & Collaborators   \\
+        \hline
+        1. Manage chat members & User            \\
+        2. Store chat history  & Message         \\
+                               & Message handler \\
+                               & Chat server     \\
+        \hline
+    \end{tabular}
+    
+\end{table}
+\begin{figure}[h]\centering\caption{CRC Cards for Chat room and Message
+    }\label{CRC cards}\end{figure}
+% CRC cards end   %
+
+Figure \ref{CRC cards} shows the CRC cards for the Chat Room and Message classes in the chat application. The Chat Room class is responsible for managing room members and storing chat history. It collaborates with the User class to handle room members and interacts with the Message, Message Handler, and Server to maintain the chat history. The Message class is responsible for managing message information and collaborates with both the User and Chat Room classes to ensure proper message handling within the application.
