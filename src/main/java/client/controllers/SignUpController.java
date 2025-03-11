@@ -1,5 +1,6 @@
 package client.controllers;
 
+import client.ClientConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -61,6 +62,12 @@ public class SignUpController extends BaseController {
         if (clientSender == null) {
             System.err.println("Error: ClientSender is not initialized!");
             errorLabel.setText("Internal error: ClientSender not set");
+            return;
+        }
+
+         if (!ClientConnection.getInstance().connected()) {
+            System.err.println("Error: ClientConnection is not initialized!");
+            errorLabel.setText("Error: not connect to a server");
             return;
         }
         

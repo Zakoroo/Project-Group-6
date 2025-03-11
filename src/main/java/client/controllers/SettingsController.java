@@ -1,40 +1,54 @@
 package client.controllers;
+
+// Import the SceneManager class
 import client.*;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
-import client.SceneManager;  // Import the SceneManager class
 
-public class SettingsController {
+public class SettingsController extends BaseController {
 
     // Declare FXML components
     @FXML
-    private TextField ipAdress;  // The TextField for IP Address
+    private TextField ipAdress; // The TextField for IP Address
     @FXML
-    private TextField port;      // The TextField for Port
+    private TextField port; // The TextField for Port
     @FXML
-    private Label errorLabel;    // The label for error messages
+    private Label errorLabel; // The label for error messages
 
-    // This method is called when the "Confirm" button is clicked
+    @Override
+    public void initialize() {
+    }
+
+    @Override
+    public void setDependencies() {
+    }
+
+    @Override
+    public void render() {
+    }
+
     @FXML
     private void handleConfirm(ActionEvent event) {
-        // Get the values from the TextFields
         String ip = ipAdress.getText();
         String portText = port.getText();
+        if (ip.isEmpty() || portText.isEmpty()) {
+            System.err.println("Fields empty!");
+            return;
+        }
+        errorLabel.setText(""); // Clear error label
+        try {
+            ClientReceiver.getInstance().stop();
+            ClientConnection.getInstance().connect(ip, Integer.parseInt(portText));
+            ClientReceiver.getInstance().reset();
+            new Thread(ClientReceiver.getInstance()).start();
 
-        // Simple validation example
-            // Proceed with further logic, e.g., saving settings, etc.
-            errorLabel.setText(""); // Clear error label
-            try {
-                ClientConnection.getInstance().connect(ip, Integer.parseInt(portText));
-            } catch (Exception e) {
-                errorLabel.setText("connection failed");
-            }
-
-            // Switch scene to the SignIn view using SceneManager singleton
             SceneManager.getInstance().switchScene("/fxml/signinView.fxml");
-        
+        } catch (Exception e) {
+            errorLabel.setText("Connection failed: " + e.getMessage());
+        }
     }
+
 }

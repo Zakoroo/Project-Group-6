@@ -21,10 +21,6 @@ public class ClientDriver extends Application {
             ClientReceiver.getInstance().setSceneManager(SceneManager.getInstance());
             ClientReceiver.getInstance().setClientModel(ClientModel.getInstance());
             ClientReceiver.getInstance().setSearchModel(SearchModel.getInstance());
-
-            // start the receiver
-            new Thread(ClientReceiver.getInstance()).start();
-
         } catch (Exception e) {
             System.err.println("Failed to start client: " + e.getMessage());
             e.printStackTrace();
@@ -36,9 +32,8 @@ public class ClientDriver extends Application {
         // connect to the server
         ClientConnection connection = ClientConnection.getInstance();
         try {
-            connection.connect("localhost", 8005);
-            ClientSender.initialize(connection.getOutputStream());
-            ClientReceiver.initialize(connection.getInputStream());
+            ClientSender.initialize(connection);
+            ClientReceiver.initialize(connection);
         } catch (Exception e) {
             e.printStackTrace();
         }

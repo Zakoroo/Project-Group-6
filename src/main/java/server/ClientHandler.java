@@ -35,6 +35,8 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Client connected: " + clientSocket.getRemoteSocketAddress());
+
         try {
             // Do not change order: it will cause deadlock
             oos = new ObjectOutputStream(clientSocket.getOutputStream());

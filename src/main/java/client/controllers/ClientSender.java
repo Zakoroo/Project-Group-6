@@ -1,17 +1,17 @@
 package client.controllers;
 
-import java.io.ObjectOutputStream;
 import java.sql.Timestamp;
+import client.ClientConnection;
 import shared.Container;
 
 
 public class ClientSender {
     private static ClientSender instance;
-    private ObjectOutputStream oos;
+    private ClientConnection connection;
 
-    public static void initialize(ObjectOutputStream oos) {
+    public static void initialize(ClientConnection connection) {
         if (instance == null) {
-            instance = new ClientSender(oos);
+            instance = new ClientSender(connection);
         } else {
             System.out.println("ClientSender already initialized!");
         }
@@ -24,8 +24,8 @@ public class ClientSender {
         return instance;
     }
 
-    private ClientSender(ObjectOutputStream oos) {
-        this.oos = oos;
+    private ClientSender(ClientConnection connection) {
+        this.connection = connection;
     }
 
     public void signup(String nickname, String username, String email, String password) throws Exception {
@@ -108,7 +108,7 @@ public class ClientSender {
     }
 
     private void sendRequest(Container request) throws Exception {
-        oos.writeObject(request);
-        oos.flush();
+        connection.getOutputStream().writeObject(request);
+        connection.getOutputStream().flush();
     }
 }

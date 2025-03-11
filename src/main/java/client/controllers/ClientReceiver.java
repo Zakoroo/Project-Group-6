@@ -2,25 +2,26 @@ package client.controllers;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import java.io.ObjectInputStream;
 import java.util.List;
 import shared.ChatRoom;
 import shared.Container;
 import shared.Message;
+import client.ClientConnection;
 import client.SceneManager;
 import client.models.ClientModel;
 import client.models.SearchModel;
 
 public class ClientReceiver implements Runnable {
     private static ClientReceiver instance;
-    private ObjectInputStream ois;
+    private ClientConnection connection;
     private ClientModel clientModel;
     private SearchModel searchModel;
     private SceneManager sceneManager;
+    private volatile boolean running = true;
 
-    public static void initialize(ObjectInputStream ois) {
+    public static void initialize(ClientConnection connection) {
         if (instance == null) {
-            instance = new ClientReceiver(ois);
+            instance = new ClientReceiver(connection);
         } else {
             System.out.println("ClientReceiver already initialized!");
         }
@@ -33,8 +34,21 @@ public class ClientReceiver implements Runnable {
         return instance;
     }
 
-    private ClientReceiver(ObjectInputStream ois) {
-        this.ois = ois;
+    public void reset() {
+        if (!running) {
+            running = true;
+            System.out.println("Client receiver reset!");
+        } else {
+            System.err.println("Client receiver is running!");
+        }
+    }
+
+    public void stop() {
+        running = false;
+    }
+
+    private ClientReceiver(ClientConnection connection) {
+        this.connection = connection;
     }
 
     public void setSceneManager(SceneManager sceneManager) {
@@ -51,25 +65,30 @@ public class ClientReceiver implements Runnable {
 
     @Override
     public void run() {
-        Platform.runLater(() -> {
-
-        });
         try {
-            while (true) {
-                if (ois == null) {
+            while (running) {
+                if (connection == null || connection.getInputStream() == null) {
                     System.out.println("Input stream is null!");
+                    return;
                 }
-                Object object = ois.readObject();
-                if (object instanceof Container) {
-                    Container response = (Container) object;
-                    Platform.runLater(() -> updateModel(response));
 
-                } else {
-                    System.out.println("Object is not of type container!");
+                try {
+                    Object object = connection.getInputStream().readObject();
+                    if (object instanceof Container) {
+                        Container response = (Container) object;
+                        Platform.runLater(() -> updateModel(response));
+                    } else {
+                        System.out.println("Object is not of type container!");
+                    }
+                } catch (java.net.SocketException e) {
+                    System.out.println("Socket closed. Stopping ClientReceiver.");
+                    break; // Exit the loop to stop the thread
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("ClientReceiver stopped.");
         }
     }
 
