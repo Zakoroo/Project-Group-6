@@ -1,4 +1,5 @@
 package client.controllers;
+import client.*;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,8 +27,11 @@ public class SettingsController {
         // Simple validation example
             // Proceed with further logic, e.g., saving settings, etc.
             errorLabel.setText(""); // Clear error label
-            System.out.println("Server IP: " + ip);
-            System.out.println("Server Port: " + portText);
+            try {
+                ClientConnection.getInstance().connect(ip, Integer.parseInt(portText));
+            } catch (Exception e) {
+                errorLabel.setText("connection failed");
+            }
 
             // Switch scene to the SignIn view using SceneManager singleton
             SceneManager.getInstance().switchScene("/fxml/signinView.fxml");
