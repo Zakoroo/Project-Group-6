@@ -69,7 +69,7 @@ public class ClientReceiver implements Runnable {
             while (running) {
                 if (connection == null || connection.getInputStream() == null) {
                     System.out.println("Input stream is null!");
-                    return;
+                    break;
                 }
 
                 try {

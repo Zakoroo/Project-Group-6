@@ -1,0 +1,22 @@
+@startuml
+actor User
+participant ClientGUI as "Client GUI"
+participant ClientSender as "ClientSender"
+participant Server as "ChatServer"
+participant ClientHandler as "ClientHandler"
+participant AccountHandler as "AccountHandler"
+database Database as "PostgreSQL"
+
+User -> ClientGUI : Enters username & password
+ClientGUI -> ClientSender : Send sign-in request
+ClientSender -> Server : Send Container("signin", credentials)
+Server -> ClientHandler : Forward sign-in request
+ClientHandler -> AccountHandler : Validate credentials
+AccountHandler -> Database : Query user credentials
+Database --> AccountHandler : Return authentication result
+AccountHandler --> ClientHandler : Success/Failure result
+ClientHandler --> Server : Forward response
+Server --> ClientSender : Send sign-in response
+ClientSender --> ClientGUI : Update UI (Success/Failure)
+ClientGUI -> User : Display login success or failure message
+@enduml

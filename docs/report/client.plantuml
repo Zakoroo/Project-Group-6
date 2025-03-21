@@ -1,0 +1,145 @@
+@startuml
+skinparam linetype ortho
+skinparam padding 5
+
+package client {
+    class ClientDriver << (D,#00BFFF) Driver >> {
+        + void main(String[] args)
+        + void start(Stage primaryStage)
+    }
+
+    class ClientConnection << (S,#FF7700) Singleton >> {
+        + static ClientConnection getInstance()
+        + void connect(String ip, int port)
+        + ObjectInputStream getInputStream()
+        + ObjectOutputStream getOutputStream()
+    }
+
+    class SceneManager << (S,#FF7700) Singleton >> {
+        + static void initialize(Stage primaryStage)
+        + static SceneManager getInstance()
+        + void switchScene(String fxmlFile)
+        + void showPopup(String fxmlFile, String title)
+        + BaseController getCurrenController()
+        + void setCurrenController(BaseController currenController)
+    }
+
+    abstract class BaseController {
+        + void setSceneManager(SceneManager sceneManager)
+        + void setClientSender(ClientSender clientSender)
+        + void setClientModel(ClientModel clientModel)
+        + void setSearchModel(SearchModel searchModel)
+        + void initialize()
+        + void setDependencies()
+        + void render()
+    }
+
+    together {
+        class SignInController << (C,#32CD32) Scene Controller >> extends BaseController {
+            + void initialize()
+            + void setDependencies()
+            + void render()
+            + void handleSignIn(ActionEvent event)
+            + void handleRegisterNow(ActionEvent event)
+            + void handleSettings(ActionEvent event)
+            + void setClientSender(ClientSender clientSender)
+        }
+
+        class SignUpController << (C,#32CD32) Scene Controller >> extends BaseController {
+            + void initialize()
+            + void setDependencies()
+            + void render()
+            + void handleSignUp(ActionEvent event)
+            + void handleAlreadyRegistered(ActionEvent event)
+            + void handleSettings(ActionEvent event)
+        }
+
+        class SettingsController << (C,#32CD32) Scene Controller >> extends BaseController {
+            + void initialize()
+            + void setDependencies()
+            + void render()
+            + void handleConfirm(ActionEvent event)
+        }
+
+        class MainController << (C,#32CD32) Scene Controller >> extends BaseController {
+            + void initialize()
+            + void setDependencies()
+            + void render()
+            + void handleSend(ActionEvent event)
+            + void handleSignOut(ActionEvent event)
+            + void handleAddGroup(ActionEvent event)
+            + void handleAttachImage(ActionEvent event)
+        }
+
+        class SearchController << (C,#32CD32) Scene Controller >> extends BaseController {
+            + void initialize()
+            + void setDependencies()
+            + void render()
+            + void handleSearch(ActionEvent event)
+        }
+    }
+
+
+    class ClientReceiver << (S,#FF7700) Singleton >> implements Runnable  {
+        + static void initialize(ClientConnection connection)
+        + static ClientReceiver getInstance()
+        + void reset()
+        + void stop()
+        + void run()
+        + void setSceneManager(SceneManager sceneManager)
+        + void setClientModel(ClientModel clientModel)
+        + void setSearchModel(SearchModel searchModel)
+    }
+
+    class ClientSender << (S,#FF7700) Singleton >> {
+        + static void initialize(ClientConnection connection)
+        + static ClientSender getInstance()
+        + void signup(String nickname, String username, String email, String password)
+        + void getJoinedChats()
+        + void signin(String username, String password)
+        + void deleteUser(String password)
+        + void createChat(String chatname)
+        + void joinChat(String chatname)
+        + void connectChat(String chatname)
+        + void findChat(String toFind)
+        + void quitChat(String chatname)
+    }
+
+    class ClientModel << (S,#FF7700) Singleton >> {
+        + static ClientModel getInstance()
+        + void addMessage(Message message)
+        + void setHistory(List<Message> history)
+        + void setConnectedChatRoom(String chatname)
+        + void clearModel()
+        + void addChatRoom(ChatRoom chatroom)
+        + void removeChatRoom(String chatname)
+        + void setJoinedChatRooms(List<ChatRoom> chatRooms)
+    }
+
+    class SearchModel {
+        + static SearchModel getInstance()
+        + void setResultSet(List<ChatRoom> searchResult)
+    }
+}
+
+
+
+ClientDriver ..> SceneManager : creates
+ClientDriver ..> ClientSender : creates
+ClientDriver ..> ClientReceiver : creates
+ClientReceiver o-- ClientModel : updates
+ClientReceiver o-- SceneManager : invokes
+ClientReceiver o-- SearchModel : invokes
+ClientSender o-- ClientConnection : uses
+SceneManager ..> BaseController : injects
+BaseController o-- SceneManager : invokes
+BaseController --> ClientSender : uses
+BaseController -left-> ClientModel : uses
+BaseController --> SearchModel : uses
+' MainController --> ClientSender : uses
+' SignInController --> ClientSender : uses
+' SignUpController --> ClientSender : uses
+' SettingsController --> ClientSender : uses
+' SearchController --> ClientSender : uses
+
+@enduml

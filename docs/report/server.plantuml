@@ -1,0 +1,80 @@
+@startuml
+skinparam linetype ortho
+
+package server {
+    class ChatServer {
+        - HikariDataSource dataSource
+        - ServerSocket serverSocket
+        - Socket clientSocket
+        - Connection connection
+        - NotificationHandler notificationHandler
+        + ChatServer()
+        + Connection dbConnectionInit()
+    }
+
+    class ClientHandler {
+        - Socket clientSocket
+        - AccountHandler accountHandler
+        - ChatHandler chatHandler
+        - NotificationHandler notificationHandler
+        - ChatRoom chatroom
+        - String username
+        - ObjectOutputStream oos
+        - ObjectInputStream ois
+        + ClientHandler(Socket clientSocket, HikariDataSource dataSource, NotificationHandler notificationHandler)
+        + void run()
+        - Container executeCommand(Container container)
+        - Container handleSignup(Object data)
+        - Container handleSignin(Object data)
+        - Container handleDeleteUser(Object data)
+        - Container handleCreateChat(Object data)
+        - Container handleJoinChat(Object data)
+        - Container handleConnectChat(Object data)
+    }
+
+    class ChatHandler {
+        - HikariDataSource dataSource
+        + ChatHandler(HikariDataSource dataSource)
+        + ChatRoom createChat(String chatName, String chatHost)
+        + List<ChatRoom> findChat(String searchTerm, String username)
+        + ChatRoom joinChat(String username, String chatname)
+        + ChatRoom connectChat(String username, String chatname)
+        + boolean quitChat(String username, String chatname)
+        + List<ChatRoom> getJoinedChatRooms(String username)
+        + boolean sendMessage(Message msg, String chatname)
+        + List<Message> getHistory(String chatName, Timestamp timestamp)
+    }
+
+    class NotificationHandler {
+        - Connection connection
+        - ConcurrentMap<String, CopyOnWriteArrayList<ObjectOutputStream>> chatListeners
+        + NotificationHandler(Connection connection)
+        + void addChatRoom(String chatname)
+        + void removeChatRoomIfEmpty(String chatname)
+        + void addListener(String chatname, ObjectOutputStream listener)
+        + void removeListener(String chatname, ObjectOutputStream listener)
+        + void run()
+        + void broadcast(String chatname)
+    }
+
+    class AccountHandler {
+        - HikariDataSource dataSource
+        + AccountHandler(HikariDataSource dataSource)
+        + boolean signup(String nickname, String username, String email, String password)
+        + boolean signin(String username, String password)
+        + boolean deleteUser(String username, String password)
+    }
+
+    class ServerDriver {
+        + void main(String[] args)
+    }
+}
+
+ServerDriver ..> ChatServer : creates
+ChatServer ..> ClientHandler : creates
+ChatServer ..> NotificationHandler : creates
+ClientHandler --> NotificationHandler : uses
+ClientHandler o-- ChatHandler : uses
+ClientHandler o-- AccountHandler : uses
+
+@enduml

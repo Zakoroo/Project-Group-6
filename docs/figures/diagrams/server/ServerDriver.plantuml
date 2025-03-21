@@ -1,9 +1,0 @@
-@startuml ServerDriver
-package server {
-    class ServerDriver {
-        +main(String[] args)
-    }
-
-    ServerDriver --> ChatServer
-}
-@enduml

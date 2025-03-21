@@ -22,7 +22,6 @@ public class ClientHandler implements Runnable {
     private NotificationHandler notificationHandler;
     private ChatRoom chatroom;
     private String username;
-
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
 

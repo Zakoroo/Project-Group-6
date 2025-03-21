@@ -72,6 +72,6 @@ server: $(CONFIG_FILE) $(HIKARI_FILE)
 	@mvn clean compile exec:java -Pserver
 
 # Target to run the client side application using Maven
-client: $(CONFIG_FILE) $(HIKARI_FILE)
+client:
 	@echo "Running client side application..."
 	@mvn clean compile exec:java -Pclient
